@@ -1,0 +1,15 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+  T3docs\ProjectInfo\:
+    resource: '../Classes/*'
+    exclude: '../Classes/Domain/Model/*'
+  T3docs\ProjectInfo\Command\TechnicalDocumentationCommand:
+    tags:
+      -
+        name: console.command
+        command: projectinfo:writeTechnicalDocumentation
+        description: 'Write technical documentation.'
+        schedulable: true
