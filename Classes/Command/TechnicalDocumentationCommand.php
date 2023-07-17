@@ -9,11 +9,23 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use T3docs\ProjectInfo\Component\TechnicalDocumentation;
+use T3docs\ProjectInfo\Component\TechnicalDocumentation\RecordCount;
+use T3docs\ProjectInfo\DataProvider\ContentCountProvider;
+use T3docs\ProjectInfo\DataProvider\PagesCountProvider;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TechnicalDocumentationCommand extends AbstractCommand
 {
+
+    public function __construct(
+        private readonly PagesCountProvider $pagesCountProvider,
+        private readonly ContentCountProvider $contentCountProvider
+    )
+    {
+        parent::__construct();
+    }
+
     protected function configure(): void
     {
 
@@ -43,25 +55,49 @@ class TechnicalDocumentationCommand extends AbstractCommand
             ->setVersion($version)
             ->setDescription($description);
 
-        // Create extension directory
+        try {
+            $absoluteDocsPath = $this->getAbsoluteDocsPath($directory);
+            $this->writeFile($absoluteDocsPath,'index.rst', $documentation->__toString());
+            $recordCount = new RecordCount(
+                [
+                    $this->pagesCountProvider->getHeader() => $this->pagesCountProvider->provide(),
+                    $this->contentCountProvider->getHeader() => $this->contentCountProvider->provide(),
+                ]
+            );
+            $this->writeFile($absoluteDocsPath,'recordCount.rst', $recordCount->__toString());
+        } catch (\Exception $exception) {
+            $this->io->error($exception->getMessage());
+            return Command::FAILURE;
+        }
+        return Command::SUCCESS;
+    }
+
+    private function writeFile(string $absoluteDocsPath, string $fileName, string $content): void
+    {
+        $absoluteFileName = rtrim($absoluteDocsPath, '/') . '/' . $fileName;
+        if (file_exists($absoluteFileName)
+            && !$this->io->confirm('A index.rst does already exist. Do you want to override it?', true)
+        ) {
+            $this->io->note('Creating '.$fileName.' skipped');
+        } elseif (!GeneralUtility::writeFile($absoluteFileName, $content, true)) {
+            throw new \Exception('Creating '.$fileName.' failed');
+        }
+    }
+
+    /**
+     * @throws \Exception
+     */
+    protected function getAbsoluteDocsPath(string $directory): string
+    {
         $absoluteDocsPath = Environment::getProjectPath() . '/' . $directory;
         if (!file_exists($absoluteDocsPath)) {
             try {
                 GeneralUtility::mkdir_deep($absoluteDocsPath);
             } catch (\Exception $e) {
-                $this->io->error('Creating of directory ' . $absoluteDocsPath . ' failed');
-                return Command::FAILURE;
+                throw new \Exception('Creating of directory ' . $absoluteDocsPath . ' failed');
             }
         }
-        $indexFile = rtrim($absoluteDocsPath, '/') . '/index.rst';
-        if (file_exists($indexFile)
-            && !$this->io->confirm('A index.rst does already exist. Do you want to override it?', true)
-        ) {
-            $this->io->note('Creating index.rst skipped');
-        } elseif (!GeneralUtility::writeFile($indexFile, $documentation->__toString(), true)) {
-            $this->io->error('Creating composer.json failed');
-            return 1;
-        }
-        return Command::SUCCESS;
+        return $absoluteDocsPath;
     }
+
 }

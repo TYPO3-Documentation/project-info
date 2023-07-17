@@ -2,18 +2,13 @@
 
 declare(strict_types=1);
 
-/*
- * This file is part of TYPO3 CMS-based extension "b13/make" by b13.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- */
-
 namespace T3docs\ProjectInfo\Component;
 
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Fluid\View\StandaloneView;
 
 /**
  * TechnicalDocumentation component
