@@ -76,7 +76,7 @@ class TechnicalDocumentationCommand extends AbstractCommand
     {
         $absoluteFileName = rtrim($absoluteDocsPath, '/') . '/' . $fileName;
         if (file_exists($absoluteFileName)
-            && !$this->io->confirm('A index.rst does already exist. Do you want to override it?', true)
+            && !$this->io->confirm('A ' . $fileName .' does already exist. Do you want to override it?', true)
         ) {
             $this->io->note('Creating '.$fileName.' skipped');
         } elseif (!GeneralUtility::writeFile($absoluteFileName, $content, true)) {
