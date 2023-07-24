@@ -43,8 +43,9 @@ class ContentCountProvider implements DataProvider
             ->count('uid')
             ->from('tt_content')
             ->where(
-                $queryBuilder->expr()->eq('CType',
-                        $queryBuilder->createNamedParameter('text')
+                $queryBuilder->expr()->eq(
+                    'CType',
+                    $queryBuilder->createNamedParameter('text')
                 )
             )
             ->executeQuery()

@@ -17,18 +17,15 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TechnicalDocumentationCommand extends AbstractCommand
 {
-
     public function __construct(
         private readonly PagesCountProvider $pagesCountProvider,
         private readonly ContentCountProvider $contentCountProvider
-    )
-    {
+    ) {
         parent::__construct();
     }
 
     protected function configure(): void
     {
-
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -36,6 +33,10 @@ class TechnicalDocumentationCommand extends AbstractCommand
         $directory = (string)$this->io->ask(
             'Where should the documentation be created?',
             $this->getProposalFromEnvironment('EXTENSION_DIR', 'docs/')
+        );
+        $language = (string)$this->io->ask(
+            'In what language?',
+            'en-US'
         );
         $projectTitle = (string)$this->io->ask(
             'Enter the project title',
@@ -49,22 +50,27 @@ class TechnicalDocumentationCommand extends AbstractCommand
             'Enter the description',
             null
         );
+        $options = [
+            'directors' => $directory,
+            'language' => $language,
+        ];
 
         $documentation = (new TechnicalDocumentation())
+            ->setOptions($options)
             ->setProjectName($projectTitle)
             ->setVersion($version)
             ->setDescription($description);
 
         try {
             $absoluteDocsPath = $this->getAbsoluteDocsPath($directory);
-            $this->writeFile($absoluteDocsPath,'index.rst', $documentation->__toString());
+            $this->writeFile($absoluteDocsPath, 'index.rst', $documentation->__toString());
             $recordCount = new RecordCount(
                 [
                     $this->pagesCountProvider->getHeader() => $this->pagesCountProvider->provide(),
                     $this->contentCountProvider->getHeader() => $this->contentCountProvider->provide(),
                 ]
             );
-            $this->writeFile($absoluteDocsPath,'recordCount.rst', $recordCount->__toString());
+            $this->writeFile($absoluteDocsPath, 'recordCount.rst', $recordCount->__toString());
         } catch (\Exception $exception) {
             $this->io->error($exception->getMessage());
             return Command::FAILURE;
@@ -76,11 +82,11 @@ class TechnicalDocumentationCommand extends AbstractCommand
     {
         $absoluteFileName = rtrim($absoluteDocsPath, '/') . '/' . $fileName;
         if (file_exists($absoluteFileName)
-            && !$this->io->confirm('A ' . $fileName .' does already exist. Do you want to override it?', true)
+            && !$this->io->confirm('A ' . $fileName . ' does already exist. Do you want to override it?', true)
         ) {
-            $this->io->note('Creating '.$fileName.' skipped');
+            $this->io->note('Creating ' . $fileName . ' skipped');
         } elseif (!GeneralUtility::writeFile($absoluteFileName, $content, true)) {
-            throw new \Exception('Creating '.$fileName.' failed');
+            throw new \Exception('Creating ' . $fileName . ' failed');
         }
     }
 
@@ -99,5 +105,4 @@ class TechnicalDocumentationCommand extends AbstractCommand
         }
         return $absoluteDocsPath;
     }
-
 }

@@ -9,7 +9,7 @@ class RenderRstUtility
     public const EOL = "\n";
     public const HEADER_CHARS = ['=', '=', '-', '~', '\''];
 
-    public static function renderHeadLine(string $headline, int $level = 0) : string
+    public static function renderHeadLine(string $headline, int $level = 0): string
     {
         $rst = '';
         if ($level === 0) {

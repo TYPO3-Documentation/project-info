@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace T3docs\ProjectInfo\Component;
 
-use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Utility\ArrayUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Fluid\View\StandaloneView;
+use T3docs\ProjectInfo\Utilities\RenderRstUtility;
 
 /**
  * TechnicalDocumentation component
@@ -22,6 +18,8 @@ class TechnicalDocumentation
     protected string $description = '';
 
     protected string $directory = '';
+
+    protected array $options = [];
 
     public function getProjectName(): string
     {
@@ -67,6 +65,16 @@ class TechnicalDocumentation
         return $this;
     }
 
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
+
+    public function setOptions(array $options): TechnicalDocumentation
+    {
+        $this->options = $options;
+        return $this;
+    }
 
     public function __toString(): string
     {
@@ -77,9 +85,7 @@ class TechnicalDocumentation
 :version:
     %s
 
-=================================================================================
-|project|
-=================================================================================
+%s
 
 %s
 
@@ -90,7 +96,6 @@ class TechnicalDocumentation
     *
 
 EOF;
-        return sprintf($meta, $this->projectName, $this->version, $this->description);
-
+        return sprintf($meta, $this->projectName, $this->version, RenderRstUtility::renderHeadLine($this->projectName, 0), $this->description);
     }
 }

@@ -9,7 +9,8 @@ class RecordCount
 {
     private array $tables = [];
 
-    public function __construct(array $data) {
+    public function __construct(array $data)
+    {
         foreach ($data as $type => $table) {
             $this->tables[$type] = $table;
         }
@@ -26,12 +27,10 @@ EOF;
             $tableTypes .= $this->printTableType($type, $table);
         }
         return sprintf($meta, RenderRstUtility::renderHeadLine('Record Count'), $tableTypes);
-
     }
 
     private function printTableType(string $type, Table $table): string
     {
-
         $meta = <<<'EOF'
 %s
 %s
