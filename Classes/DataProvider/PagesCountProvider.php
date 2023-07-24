@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace T3docs\ProjectInfo\DataProvider;
 
 use T3docs\ProjectInfo\Component\Table;
-use T3docs\ProjectInfo\Component\TechnicalDocumentation\RecordCount;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 
 class PagesCountProvider implements DataProvider

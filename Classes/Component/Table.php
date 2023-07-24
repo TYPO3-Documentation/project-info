@@ -14,7 +14,6 @@ class Table
         $this->data = $data;
     }
 
-
     public function __toString(): string
     {
         $tableCount = $this->getTableCount();
@@ -23,7 +22,7 @@ class Table
             $line = '';
             foreach ($row as $key => $field) {
                 $line = ($line==='')?'':$line . '  ';
-                $line .= $field . str_repeat(' ',$tableCount[$key] - strlen($field));
+                $line .= $field . str_repeat(' ', $tableCount[$key] - strlen($field));
             }
             $rst .= $line . "\n";
             if ($rowCount === 0) {
@@ -36,11 +35,12 @@ class Table
         return $rst;
     }
 
-    private static function tableDividerLine(array $tableCount):string {
+    private static function tableDividerLine(array $tableCount): string
+    {
         $rst = '';
         foreach ($tableCount as $fieldCount) {
             $rst = ($rst==='')?'':$rst . '  ';
-            $rst .= str_repeat("=", (int)$fieldCount);
+            $rst .= str_repeat('=', (int)$fieldCount);
         }
         $rst .= "\n";
         return $rst;
