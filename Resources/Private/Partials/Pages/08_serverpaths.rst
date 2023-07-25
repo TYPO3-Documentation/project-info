@@ -1,0 +1,26 @@
+..  include:: /Includes.rst.txt
+
+===================
+Verzeichnisstruktur
+===================
+
+Die Verzeichnisstruktur des webroots sowie des Themes (sofern nicht in Erweiterung ausgelagert) muss dargestellt werden.
+
+Webroot / fileadmin
+===================
+
+Sämtliche von Benutzern hochgeladene Dateien befinden sich unterhalb des Ordners:
+fileadmin/user_upload
+
+*   fileadmin/user_upload/downloads -> Downloads
+*   fileadmin/user_upload/content/images -> Bilder im Inhaltsbereich
+*   fileadmin/user_upload/content/videos -> Videos im Inhaltsbereich
+
+Theme
+=====
+
+Die Dateien des Themes befinden sich in Extension my_sitepackage.
+
+*   vendor/myvendor/my_sitepackage/Ressources/Public/Css -> Stylesheets
+*   vendor/myvendor/my_sitepackage/Ressources/Public/JavaScript -> JavaScrips
+*   vendor/myvendor/my_sitepackage/Ressources/Public/Images -> Bilder und Grafiken

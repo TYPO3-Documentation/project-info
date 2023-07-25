@@ -1,0 +1,14 @@
+﻿
+..  documentblock::
+    :identifier: mainmenu
+
+    ..  rubric:: Main Menu
+
+..  documentblock::
+    :identifier: navbar
+
+
+..  documentblock::
+    :identifier: footer
+
+    © Copyright since 2023 by the WebCommerce GmbH
