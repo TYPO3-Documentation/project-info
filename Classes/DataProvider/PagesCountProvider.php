@@ -7,8 +7,11 @@ namespace T3docs\ProjectInfo\DataProvider;
 use T3docs\ProjectInfo\Component\Table;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 
-class PagesCountProvider implements DataProvider
+class PagesCountProvider extends BaseDataProvider
 {
+    protected string $filename = '_pageCount.rst.txt';
+    protected string $header = 'Pages';
+
     public function __construct(
         private readonly ConnectionPool $connectionPool
     ) {
@@ -45,10 +48,5 @@ class PagesCountProvider implements DataProvider
             ->executeQuery()
             ->fetchOne();
         return ['Pages Standard', $count];
-    }
-
-    public function getHeader(): string
-    {
-        return 'Pages';
     }
 }

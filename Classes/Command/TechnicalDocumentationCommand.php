@@ -12,6 +12,7 @@ use T3docs\ProjectInfo\Component\TechnicalDocumentation;
 use T3docs\ProjectInfo\Component\TechnicalDocumentation\RecordCount;
 use T3docs\ProjectInfo\DataProvider\ContentCountProvider;
 use T3docs\ProjectInfo\DataProvider\PagesCountProvider;
+use T3docs\ProjectInfo\Renderer\TableRenderer;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -61,16 +62,27 @@ class TechnicalDocumentationCommand extends AbstractCommand
             ->setVersion($version)
             ->setDescription($description);
 
+        $dataProviders = [
+            $this->pagesCountProvider,
+            $this->contentCountProvider,
+        ];
+        $renderers = [
+            new TableRenderer(),
+        ];
+
+
         try {
             $absoluteDocsPath = $this->getAbsoluteDocsPath($directory);
             $this->writeFile($absoluteDocsPath, 'index.rst', $documentation->__toString());
-            $recordCount = new RecordCount(
-                [
-                    $this->pagesCountProvider->getHeader() => $this->pagesCountProvider->provide(),
-                    $this->contentCountProvider->getHeader() => $this->contentCountProvider->provide(),
-                ]
-            );
-            $this->writeFile($absoluteDocsPath, 'recordCount.rst', $recordCount->__toString());
+            $absoluteIncludesPath = $this->getAbsoluteDocsPath($directory . '/_includes');
+            foreach ($dataProviders as $dataProvider) {
+                foreach ($renderers as $renderer) {
+                    if ($renderer->canRender($dataProvider)) {
+                        $this->writeFile($absoluteIncludesPath, $dataProvider->getFilename(), $renderer->render($dataProvider));
+                        break;
+                    }
+                }
+            }
         } catch (\Exception $exception) {
             $this->io->error($exception->getMessage());
             return Command::FAILURE;
