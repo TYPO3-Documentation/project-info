@@ -9,7 +9,7 @@ use T3docs\ProjectInfo\Utilities\RenderRstUtility;
 /**
  * TechnicalDocumentation component
  */
-class TechnicalDocumentation
+class TechnicalDocumentation implements Data
 {
     protected string $projectName = '';
 

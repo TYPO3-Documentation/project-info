@@ -7,7 +7,7 @@ namespace T3docs\ProjectInfo\DataProvider;
 use T3docs\ProjectInfo\Component\Table;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 
-class PagesCountProvider extends BaseDataProvider
+class PagesCountProvider extends BaseDataProvider implements TableDataProvider
 {
     protected string $filename = '_pageCount.rst.txt';
     protected string $header = 'Pages';

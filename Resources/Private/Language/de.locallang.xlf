@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" original="project-info/Resources/Private/Language/locallang.xlf" date="2023-07-28T10:26:01Z">
+        <header />
+        <body>
+            <trans-unit id="title.technicalDocumentation" resname="title.technicalDocumentation">
+                <target>Technische Dokumentation von "%s"</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

@@ -6,18 +6,22 @@ namespace T3docs\ProjectInfo\Renderer;
 
 use T3docs\ProjectInfo\Component\Table;
 use T3docs\ProjectInfo\DataProvider\DataProvider;
+use T3docs\ProjectInfo\DataProvider\TableDataProvider;
 
 class TableRenderer implements Renderer
 {
 
     public function render(DataProvider $dataProvider): string
     {
+        if (!$dataProvider instanceof TableDataProvider) {
+            throw new \Exception(__CLASS__ . ' cannot render ' . $dataProvider::class);
+        }
         return $this->renderTable($dataProvider->provide());
     }
 
     public function canRender(DataProvider $dataProvider): bool
     {
-        return true;
+        return $dataProvider instanceof TableDataProvider;
     }
 
     private function renderTable(Table $table): string

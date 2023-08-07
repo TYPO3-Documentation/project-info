@@ -2,10 +2,11 @@
 
 namespace T3docs\ProjectInfo\Component\TechnicalDocumentation;
 
+use T3docs\ProjectInfo\Component\Data;
 use T3docs\ProjectInfo\Component\Table;
 use T3docs\ProjectInfo\Utilities\RenderRstUtility;
 
-class RecordCount
+class RecordCount implements Data
 {
     private array $tables = [];
 

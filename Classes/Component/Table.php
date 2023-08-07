@@ -2,7 +2,7 @@
 
 namespace T3docs\ProjectInfo\Component;
 
-class Table
+class Table implements Data
 {
     private array $data;
 

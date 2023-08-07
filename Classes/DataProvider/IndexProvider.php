@@ -5,9 +5,9 @@ namespace T3docs\ProjectInfo\DataProvider;
 use T3docs\ProjectInfo\Component\Table;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 
-class ContentCountProvider extends BaseDataProvider implements TableDataProvider
+class IndexProvider extends BaseDataProvider
 {
-    protected string $filename = '_contentCount.rst.txt';
+    protected string $filename = 'index.rst';
     protected string $header = 'Content';
 
     public function __construct(
