@@ -14,6 +14,6 @@ class TechnicalDocumentationRenderer implements Renderer
 
     public function canRender(DataProvider $dataProvider): bool
     {
-        return $dataProvider instanceof
+        return false;
     }
 }
