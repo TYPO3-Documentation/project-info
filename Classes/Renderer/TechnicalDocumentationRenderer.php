@@ -6,7 +6,6 @@ use T3docs\ProjectInfo\DataProvider\DataProvider;
 
 class TechnicalDocumentationRenderer implements Renderer
 {
-
     public function render(DataProvider $dataProvider): string
     {
         // TODO: Implement render() method.

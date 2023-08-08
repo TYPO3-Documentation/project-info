@@ -10,7 +10,6 @@ use T3docs\ProjectInfo\DataProvider\TableDataProvider;
 
 class TableRenderer implements Renderer
 {
-
     public function render(DataProvider $dataProvider): string
     {
         if (!$dataProvider instanceof TableDataProvider) {
@@ -32,7 +31,7 @@ class TableRenderer implements Renderer
             $line = '';
             foreach ($row as $key => $field) {
                 $line = ($line==='')?'':$line . '  ';
-                $line .= strval($field) . str_repeat(' ', $tableCount[$key] - strlen(strval($field)));
+                $line .= (string)$field . str_repeat(' ', $tableCount[$key] - strlen((string)$field));
             }
             $rst .= $line . "\n";
             if ($rowCount === 0) {

@@ -9,7 +9,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use T3docs\ProjectInfo\Component\TechnicalDocumentation;
-use T3docs\ProjectInfo\Component\TechnicalDocumentation\RecordCount;
 use T3docs\ProjectInfo\DataProvider\ContentCountProvider;
 use T3docs\ProjectInfo\DataProvider\PagesCountProvider;
 use T3docs\ProjectInfo\Renderer\TableRenderer;
@@ -69,7 +68,6 @@ class TechnicalDocumentationCommand extends AbstractCommand
         $renderers = [
             new TableRenderer(),
         ];
-
 
         try {
             $absoluteDocsPath = $this->getAbsoluteDocsPath($directory);
