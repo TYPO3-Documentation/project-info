@@ -31,7 +31,7 @@ class TableRenderer implements Renderer
             $line = '';
             foreach ($row as $key => $field) {
                 $line = ($line==='')?'':$line . '  ';
-                $line .= (string)$field . str_repeat(' ', $tableCount[$key] - strlen((string)$field));
+                $line .= (string)$field . str_repeat(' ', $tableCount[$key] - mb_strlen((string)$field, 'UTF-8'));
             }
             $rst .= $line . "\n";
             if ($rowCount === 0) {

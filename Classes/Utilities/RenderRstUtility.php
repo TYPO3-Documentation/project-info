@@ -19,4 +19,11 @@ class RenderRstUtility
         $rst .= str_repeat(self::HEADER_CHARS[$level], strlen($headline)) . self::EOL;
         return $rst;
     }
+
+    public static function escape(string $string): string
+    {
+        $string = preg_replace('/[\\n\\r]/', '|', $string);
+        $string = preg_replace('/[\\\\|`=*<>]/', '\\${1}' , $string);
+        return $string;
+    }
 }

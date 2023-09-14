@@ -10,7 +10,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use T3docs\ProjectInfo\Component\TechnicalDocumentation;
 use T3docs\ProjectInfo\DataProvider\ContentCountProvider;
+use T3docs\ProjectInfo\DataProvider\ExtensionProvider;
 use T3docs\ProjectInfo\DataProvider\PagesCountProvider;
+use T3docs\ProjectInfo\DataProvider\SystemExtensionProvider;
 use T3docs\ProjectInfo\Renderer\TableRenderer;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -19,7 +21,9 @@ class TechnicalDocumentationCommand extends AbstractCommand
 {
     public function __construct(
         private readonly PagesCountProvider $pagesCountProvider,
-        private readonly ContentCountProvider $contentCountProvider
+        private readonly ContentCountProvider $contentCountProvider,
+        private readonly ExtensionProvider $extensionProvider,
+        private readonly SystemExtensionProvider $systemExtensionProvider
     ) {
         parent::__construct();
     }
@@ -64,6 +68,8 @@ class TechnicalDocumentationCommand extends AbstractCommand
         $dataProviders = [
             $this->pagesCountProvider,
             $this->contentCountProvider,
+            $this->extensionProvider,
+            $this->systemExtensionProvider,
         ];
         $renderers = [
             new TableRenderer(),
