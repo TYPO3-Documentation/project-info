@@ -13,6 +13,7 @@ use T3docs\ProjectInfo\DataProvider\ContentCountProvider;
 use T3docs\ProjectInfo\DataProvider\ExtensionProvider;
 use T3docs\ProjectInfo\DataProvider\PagesCountProvider;
 use T3docs\ProjectInfo\DataProvider\SystemExtensionProvider;
+use T3docs\ProjectInfo\Renderer\ExtensionRenderer;
 use T3docs\ProjectInfo\Renderer\TableRenderer;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -72,12 +73,13 @@ class TechnicalDocumentationCommand extends AbstractCommand
             $this->systemExtensionProvider,
         ];
         $renderers = [
+            new ExtensionRenderer(),
             new TableRenderer(),
         ];
 
         try {
             $absoluteDocsPath = $this->getAbsoluteDocsPath($directory);
-            $this->writeFile($absoluteDocsPath, 'index.rst', $documentation->__toString());
+            //$this->writeFile($absoluteDocsPath, 'index.rst', $documentation->__toString());
             $absoluteIncludesPath = $this->getAbsoluteDocsPath($directory . '/_includes');
             foreach ($dataProviders as $dataProvider) {
                 foreach ($renderers as $renderer) {
