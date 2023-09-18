@@ -20,13 +20,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TechnicalDocumentationCommand extends AbstractCommand
 {
-    public function __construct(
-        private readonly PagesCountProvider $pagesCountProvider,
-        private readonly ContentCountProvider $contentCountProvider,
-        private readonly ExtensionProvider $extensionProvider,
-        private readonly SystemExtensionProvider $systemExtensionProvider
-    ) {
-        parent::__construct();
+    public function __construct(private readonly PagesCountProvider $pagesCountProvider, private readonly ContentCountProvider $contentCountProvider, private readonly ExtensionProvider $extensionProvider, private readonly SystemExtensionProvider $systemExtensionProvider)
+    {
     }
 
     protected function configure(): void
@@ -117,7 +112,7 @@ class TechnicalDocumentationCommand extends AbstractCommand
         if (!file_exists($absoluteDocsPath)) {
             try {
                 GeneralUtility::mkdir_deep($absoluteDocsPath);
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 throw new \Exception('Creating of directory ' . $absoluteDocsPath . ' failed');
             }
         }

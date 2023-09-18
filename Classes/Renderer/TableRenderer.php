@@ -13,7 +13,7 @@ class TableRenderer implements Renderer
     public function render(DataProvider $dataProvider): string
     {
         if (!$dataProvider instanceof TableDataProvider) {
-            throw new \Exception(__CLASS__ . ' cannot render ' . $dataProvider::class);
+            throw new \Exception(self::class . ' cannot render ' . $dataProvider::class);
         }
         return $this->renderTable($dataProvider->provide());
     }
@@ -38,7 +38,7 @@ class TableRenderer implements Renderer
                 $rst .= self::tableDividerLine($tableCount);
             }
         }
-        if (count($table->getData()) > 1) {
+        if ((is_countable($table->getData()) ? count($table->getData()) : 0) > 1) {
             $rst .= self::tableDividerLine($tableCount);
         }
         return $rst;

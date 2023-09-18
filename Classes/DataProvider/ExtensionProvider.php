@@ -32,9 +32,7 @@ class ExtensionProvider extends BaseDataProvider implements TableDataProvider
             'Source',
         ]];
         $packages = $this->packageManager->getActivePackages();
-        usort($packages, function ($a, $b) {
-            return strcmp($a->getPackageKey(), $b->getPackageKey());
-        });
+        usort($packages, fn ($a, $b) => strcmp((string)$a->getPackageKey(), (string)$b->getPackageKey()));
         foreach ($packages as $package) {
             if (
                 !$package->getPackageMetaData()->isFrameworkType()
@@ -49,7 +47,7 @@ class ExtensionProvider extends BaseDataProvider implements TableDataProvider
                     if ($response->getStatusCode() !== 200) {
                         $source = 'other / local';
                     } else {
-                        $packageData = json_decode($response->getBody()->getContents(), true);
+                        $packageData = json_decode((string)$response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
                         if (isset($packageData['package']['versions'][$version])) {
                             $source = 'https://packagist.org/packages/' . $composerName . '#' . $version;
                         } elseif (isset($packageData['package']['versions']['v' . $version])) {
@@ -58,7 +56,7 @@ class ExtensionProvider extends BaseDataProvider implements TableDataProvider
                             $source = 'version not in packagist';
                         }
                     }
-                } catch (RequestException $e) {
+                } catch (RequestException) {
                     $source = 'other / local';
                 }
                 $data[] = [

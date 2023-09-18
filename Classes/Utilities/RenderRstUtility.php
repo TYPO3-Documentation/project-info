@@ -6,8 +6,8 @@ namespace T3docs\ProjectInfo\Utilities;
 
 class RenderRstUtility
 {
-    public const EOL = "\n";
-    public const HEADER_CHARS = ['=', '=', '-', '~', '\''];
+    final public const EOL = "\n";
+    final public const HEADER_CHARS = ['=', '=', '-', '~', '\''];
 
     public static function renderHeadLine(string $headline, int $level = 0): string
     {
@@ -27,13 +27,13 @@ class RenderRstUtility
         return $string;
     }
 
-    public static function indent($inputString, $numSpaces = 4): string
+    public static function indent(string $inputString, int $numSpaces = 4): string
     {
         // Create the indentation string with the desired number of spaces
         $indentation = str_repeat(' ', $numSpaces);
 
         // Split the input string into an array of lines
-        $lines = explode("\n", $inputString);
+        $lines = explode("\n", (string)$inputString);
 
         // Add the indentation to each line
         foreach ($lines as &$line) {
@@ -46,10 +46,10 @@ class RenderRstUtility
         return $indentedString;
     }
 
-    public static function wrapTextAtMaxLength($text, $maxLength = 80): string
+    public static function wrapTextAtMaxLength(string $text, int $maxLength = 80): string
     {
         // Use wordwrap to wrap lines at the specified maximum length
-        $wrappedText = wordwrap($text, $maxLength, "\n", true);
+        $wrappedText = wordwrap((string)$text, $maxLength, "\n", true);
 
         return $wrappedText;
     }

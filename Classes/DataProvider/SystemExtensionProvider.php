@@ -27,9 +27,7 @@ class SystemExtensionProvider extends BaseDataProvider implements TableDataProvi
             'Description',
         ]];
         $packages = $this->packageManager->getActivePackages();
-        usort($packages, function ($a, $b) {
-            return strcmp($a->getPackageKey(), $b->getPackageKey());
-        });
+        usort($packages, fn ($a, $b) => strcmp((string)$a->getPackageKey(), (string)$b->getPackageKey()));
         foreach ($packages as $package) {
             if (
                 $package->getPackageMetaData()->isFrameworkType()

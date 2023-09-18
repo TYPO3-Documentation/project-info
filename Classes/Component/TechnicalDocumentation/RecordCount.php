@@ -6,17 +6,15 @@ use T3docs\ProjectInfo\Component\Data;
 use T3docs\ProjectInfo\Component\Table;
 use T3docs\ProjectInfo\Utilities\RenderRstUtility;
 
-class RecordCount implements Data
+class RecordCount implements Data, \Stringable
 {
     private array $tables = [];
-
     public function __construct(array $data)
     {
         foreach ($data as $type => $table) {
             $this->tables[$type] = $table;
         }
     }
-
     public function __toString(): string
     {
         $meta = <<<'EOF'
@@ -29,7 +27,6 @@ EOF;
         }
         return sprintf($meta, RenderRstUtility::renderHeadLine('Record Count'), $tableTypes);
     }
-
     private function printTableType(string $type, Table $table): string
     {
         $meta = <<<'EOF'
