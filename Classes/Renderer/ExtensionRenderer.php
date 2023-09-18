@@ -10,7 +10,6 @@ use T3docs\ProjectInfo\Utilities\RenderRstUtility;
 
 class ExtensionRenderer implements Renderer
 {
-
     public function render(DataProvider $dataProvider): string
     {
         if (!$dataProvider instanceof TableDataProvider) {
@@ -30,7 +29,7 @@ class ExtensionRenderer implements Renderer
                 if (isset($header[$i])) {
                     $rst .=  '' . $header[$i] . "\n";
                 }
-                $rst .= RenderRstUtility::indent(RenderRstUtility::wrapTextAtMaxLength($extension[$i], 76)). "\n";
+                $rst .= RenderRstUtility::indent(RenderRstUtility::wrapTextAtMaxLength($extension[$i], 76)) . "\n";
             }
         }
         return $rst;

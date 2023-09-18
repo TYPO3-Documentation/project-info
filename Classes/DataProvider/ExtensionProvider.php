@@ -17,8 +17,7 @@ class ExtensionProvider extends BaseDataProvider implements TableDataProvider
 
     public function __construct(
         private readonly PackageManager $packageManager
-    )
-    {
+    ) {
     }
 
     public function provide(): Table
@@ -30,10 +29,10 @@ class ExtensionProvider extends BaseDataProvider implements TableDataProvider
             'Version',
             'Title',
             'Description',
-            'Source'
+            'Source',
         ]];
         $packages = $this->packageManager->getActivePackages();
-        usort($packages, function($a, $b){
+        usort($packages, function ($a, $b) {
             return strcmp($a->getPackageKey(), $b->getPackageKey());
         });
         foreach ($packages as $package) {
@@ -53,7 +52,7 @@ class ExtensionProvider extends BaseDataProvider implements TableDataProvider
                         $packageData = json_decode($response->getBody()->getContents(), true);
                         if (isset($packageData['package']['versions'][$version])) {
                             $source = 'https://packagist.org/packages/' . $composerName . '#' . $version;
-                        } else if (isset($packageData['package']['versions']['v' . $version])) {
+                        } elseif (isset($packageData['package']['versions']['v' . $version])) {
                             $source = 'https://packagist.org/packages/' . $composerName . '#v' . $version;
                         } else {
                             $source = 'version not in packagist';
@@ -63,11 +62,11 @@ class ExtensionProvider extends BaseDataProvider implements TableDataProvider
                     $source = 'other / local';
                 }
                 $data[] = [
-                    RenderRstUtility::escape ($package->getPackageKey()),
-                    RenderRstUtility::escape ($source),
-                    RenderRstUtility::escape ($package->getPackageMetaData()->getVersion()),
-                    RenderRstUtility::escape ((string)$package->getPackageMetaData()->getTitle()),
-                    RenderRstUtility::escape ((string)$package->getPackageMetaData()->getDescription()),
+                    RenderRstUtility::escape($package->getPackageKey()),
+                    RenderRstUtility::escape($source),
+                    RenderRstUtility::escape($package->getPackageMetaData()->getVersion()),
+                    RenderRstUtility::escape((string)$package->getPackageMetaData()->getTitle()),
+                    RenderRstUtility::escape((string)$package->getPackageMetaData()->getDescription()),
                     $source,
                 ];
             }

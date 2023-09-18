@@ -15,8 +15,7 @@ class SystemExtensionProvider extends BaseDataProvider implements TableDataProvi
 
     public function __construct(
         private readonly PackageManager $packageManager
-    )
-    {
+    ) {
     }
 
     public function provide(): Table
@@ -25,10 +24,10 @@ class SystemExtensionProvider extends BaseDataProvider implements TableDataProvi
             'Extension Key',
             'Version',
             'Title',
-            'Description'
+            'Description',
         ]];
         $packages = $this->packageManager->getActivePackages();
-        usort($packages, function($a, $b){
+        usort($packages, function ($a, $b) {
             return strcmp($a->getPackageKey(), $b->getPackageKey());
         });
         foreach ($packages as $package) {
@@ -38,14 +37,13 @@ class SystemExtensionProvider extends BaseDataProvider implements TableDataProvi
                 && $package->getPackageMetaData()->isExtensionType()
             ) {
                 $data[] = [
-                    RenderRstUtility::escape ($package->getPackageKey()),
-                    RenderRstUtility::escape ($package->getPackageMetaData()->getVersion()),
-                    RenderRstUtility::escape ((string)$package->getPackageMetaData()->getTitle()),
-                    RenderRstUtility::escape ((string)$package->getPackageMetaData()->getDescription()),
+                    RenderRstUtility::escape($package->getPackageKey()),
+                    RenderRstUtility::escape($package->getPackageMetaData()->getVersion()),
+                    RenderRstUtility::escape((string)$package->getPackageMetaData()->getTitle()),
+                    RenderRstUtility::escape((string)$package->getPackageMetaData()->getDescription()),
                 ];
             }
         }
         return new Table($data);
     }
-
 }

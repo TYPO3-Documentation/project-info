@@ -23,7 +23,7 @@ class RenderRstUtility
     public static function escape(string $string): string
     {
         $string = preg_replace('/[\\n\\r]/', '|', $string);
-        $string = preg_replace('/[\\\\|`=*<>]/', '\\${1}' , $string);
+        $string = preg_replace('/[\\\\|`=*<>]/', '\\${1}', $string);
         return $string;
     }
 
@@ -53,5 +53,4 @@ class RenderRstUtility
 
         return $wrappedText;
     }
-
 }
