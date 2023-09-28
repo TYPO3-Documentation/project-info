@@ -7,6 +7,7 @@ namespace T3docs\ProjectInfo\DataProvider;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use T3docs\ProjectInfo\Component\Table;
+use T3docs\ProjectInfo\ConfigurationManager;
 use T3docs\ProjectInfo\Utilities\RenderRstUtility;
 use TYPO3\CMS\Core\Package\PackageManager;
 
@@ -16,7 +17,8 @@ class ExtensionProvider extends BaseDataProvider implements TableDataProvider
     protected string $header = 'Extensions';
 
     public function __construct(
-        private readonly PackageManager $packageManager
+        private readonly PackageManager $packageManager,
+        private readonly ConfigurationManager $configurationManager
     ) {
     }
 
@@ -33,6 +35,7 @@ class ExtensionProvider extends BaseDataProvider implements TableDataProvider
         ]];
         $packages = $this->packageManager->getActivePackages();
         usort($packages, fn ($a, $b) => strcmp((string)$a->getPackageKey(), (string)$b->getPackageKey()));
+        $configuration = $this->configurationManager->getConfiguration();
         foreach ($packages as $package) {
             if (
                 !$package->getPackageMetaData()->isFrameworkType()
@@ -41,34 +44,43 @@ class ExtensionProvider extends BaseDataProvider implements TableDataProvider
             ) {
                 $composerName = (string)$package->getValueFromComposerManifest('name');
                 $version = $package->getPackageMetaData()->getVersion();
-                $client = new Client();
-                try {
-                    $response = $client->get("$packagistBaseUrl/packages/$composerName.json");
-                    if ($response->getStatusCode() !== 200) {
-                        $source = 'other / local';
-                    } else {
-                        $packageData = json_decode((string)$response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
-                        if (isset($packageData['package']['versions'][$version])) {
-                            $source = 'https://packagist.org/packages/' . $composerName . '#' . $version;
-                        } elseif (isset($packageData['package']['versions']['v' . $version])) {
-                            $source = 'https://packagist.org/packages/' . $composerName . '#v' . $version;
+                if (isset($configuration['extensions'][$package->getPackageKey()]['source'])) {
+                    $source = $configuration['extensions'][$package->getPackageKey()]['source'];
+                } else {
+                    $client = new Client();
+                    try {
+                        $response = $client->get("$packagistBaseUrl/packages/$composerName.json");
+                        if ($response->getStatusCode() !== 200) {
+                            $source = 'other / local';
                         } else {
-                            $source = 'version not in packagist';
+                            $packageData = json_decode((string)$response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+                            if (isset($packageData['package']['versions'][$version])) {
+                                $source = 'https://packagist.org/packages/' . $composerName . '#' . $version;
+                            } elseif (isset($packageData['package']['versions']['v' . $version])) {
+                                $source = 'https://packagist.org/packages/' . $composerName . '#v' . $version;
+                            } else {
+                                $source = 'version not in packagist';
+                            }
                         }
+                    } catch (RequestException) {
+                        $source = 'other / local';
                     }
-                } catch (RequestException) {
-                    $source = 'other / local';
                 }
                 $data[] = [
                     RenderRstUtility::escape($package->getPackageKey()),
                     RenderRstUtility::escape($source),
-                    RenderRstUtility::escape($package->getPackageMetaData()->getVersion()),
-                    RenderRstUtility::escape((string)$package->getPackageMetaData()->getTitle()),
-                    RenderRstUtility::escape((string)$package->getPackageMetaData()->getDescription()),
+                    RenderRstUtility::escape($configuration['extensions'][$package->getPackageKey()]['version'] ?? $package->getPackageMetaData()->getVersion()),
+                    RenderRstUtility::escape($configuration['extensions'][$package->getPackageKey()]['title'] ?? (string)$package->getPackageMetaData()->getTitle()),
+                    RenderRstUtility::escape($configuration['extensions'][$package->getPackageKey()]['description'] ?? (string)$package->getPackageMetaData()->getDescription()),
                     $source,
                 ];
+
+                if (!isset($configuration['extensions'][$package->getPackageKey()])) {
+                    $configuration['extensions'][$package->getPackageKey()] = [];
+                }
             }
         }
+        $this->configurationManager->setConfiguration($configuration);
         return new Table($data);
     }
 }

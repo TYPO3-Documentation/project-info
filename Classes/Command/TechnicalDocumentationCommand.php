@@ -9,6 +9,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use T3docs\ProjectInfo\Component\TechnicalDocumentation;
+use T3docs\ProjectInfo\ConfigurationManager;
 use T3docs\ProjectInfo\DataProvider\ContentCountProvider;
 use T3docs\ProjectInfo\DataProvider\ExtensionProvider;
 use T3docs\ProjectInfo\DataProvider\PagesCountProvider;
@@ -20,8 +21,15 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TechnicalDocumentationCommand extends AbstractCommand
 {
-    public function __construct(private readonly PagesCountProvider $pagesCountProvider, private readonly ContentCountProvider $contentCountProvider, private readonly ExtensionProvider $extensionProvider, private readonly SystemExtensionProvider $systemExtensionProvider)
+    public function __construct(
+        private readonly PagesCountProvider $pagesCountProvider,
+        private readonly ContentCountProvider $contentCountProvider,
+        private readonly ExtensionProvider $extensionProvider,
+        private readonly SystemExtensionProvider $systemExtensionProvider,
+        private readonly ConfigurationManager $configurationManager
+    )
     {
+        parent::__construct();
     }
 
     protected function configure(): void
@@ -34,33 +42,47 @@ class TechnicalDocumentationCommand extends AbstractCommand
             'Where should the documentation be created?',
             $this->getProposalFromEnvironment('EXTENSION_DIR', 'docs/')
         );
-        $language = (string)$this->io->ask(
+
+        $filePath = $directory . 'config.json';
+
+        if (file_exists($filePath)) {
+            // Read the JSON file contents
+            $config = file_get_contents($filePath);
+
+            // Attempt to decode the JSON data into a PHP array
+            $config = json_decode($config, true);
+
+            // Check if the JSON decoding was successful
+            if ($config === null) {
+                echo "JSON decoding of $filePath failed.";
+                $config = [];
+            }
+        } else {
+            echo "The JSON file $filePath does not exist.";
+            $config = [];
+        }
+
+        $config['settings']['directory'] = $directory;
+        $config['settings']['language'] = $config['settings']['language'] ?? (string)$this->io->ask(
             'In what language?',
             'en-US'
         );
-        $projectTitle = (string)$this->io->ask(
+        $config['settings']['projectTitle'] = $config['settings']['projectTitle'] ?? (string)$this->io->ask(
             'Enter the project title',
             $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename']??'My new site'
         );
-        $version = (string)$this->io->ask(
+        $config['settings']['version'] = $config['settings']['version'] ?? (string)$this->io->ask(
             'Enter the version of this documentation',
             'main'
         );
-        $description = (string)$this->io->ask(
+        $config['settings']['description'] = $config['settings']['description'] ?? (string)$this->io->ask(
             'Enter the description',
             null
         );
-        $options = [
-            'directors' => $directory,
-            'language' => $language,
-        ];
 
-        $documentation = (new TechnicalDocumentation())
-            ->setOptions($options)
-            ->setProjectName($projectTitle)
-            ->setVersion($version)
-            ->setDescription($description);
+        $documentation = (new TechnicalDocumentation());
 
+        $this->configurationManager->setConfiguration($config);
         $dataProviders = [
             $this->pagesCountProvider,
             $this->contentCountProvider,
@@ -87,6 +109,12 @@ class TechnicalDocumentationCommand extends AbstractCommand
         } catch (\Exception $exception) {
             $this->io->error($exception->getMessage());
             return Command::FAILURE;
+        }
+        $updatedConfigJsonData = json_encode($this->configurationManager->getConfiguration(), JSON_PRETTY_PRINT);
+        if (file_put_contents($filePath, $updatedConfigJsonData) !== false) {
+            echo "JSON data has been updated and written to the file $filePath. You can override the settings here. \n";
+        } else {
+            echo "Failed to write JSON data to the file $config.";
         }
         return Command::SUCCESS;
     }
