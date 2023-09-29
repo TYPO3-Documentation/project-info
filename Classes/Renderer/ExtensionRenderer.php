@@ -31,8 +31,9 @@ class ExtensionRenderer implements Renderer
                 }
                 $rst .= RenderRstUtility::indent(RenderRstUtility::wrapTextAtMaxLength($extension[$i], 76)) . "\n";
             }
+            $rst .= "\n\n";
         }
-        return $rst;
+        return $rst . "\n";
     }
 
     public function canRender(DataProvider $dataProvider): bool

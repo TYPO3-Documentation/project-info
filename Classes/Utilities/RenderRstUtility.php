@@ -49,7 +49,7 @@ class RenderRstUtility
     public static function wrapTextAtMaxLength(string $text, int $maxLength = 80): string
     {
         // Use wordwrap to wrap lines at the specified maximum length
-        $wrappedText = wordwrap((string)$text, $maxLength, "\n", true);
+        $wrappedText = wordwrap((string)$text, $maxLength, "\n", false);
 
         return $wrappedText;
     }

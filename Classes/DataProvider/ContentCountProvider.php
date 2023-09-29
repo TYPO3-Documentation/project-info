@@ -3,16 +3,19 @@
 namespace T3docs\ProjectInfo\DataProvider;
 
 use T3docs\ProjectInfo\Component\Table;
+use T3docs\ProjectInfo\Utilities\LanguageService;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 
 class ContentCountProvider extends BaseDataProvider implements TableDataProvider
 {
     protected string $filename = '_contentCount.rst.txt';
-    protected string $header = 'Content';
+    protected string $header = 'header.content';
 
     public function __construct(
-        private readonly ConnectionPool $connectionPool
+        private readonly ConnectionPool $connectionPool,
+        LanguageService $languageService
     ) {
+        parent::__construct($languageService);
     }
 
     public function provide(): Table
@@ -31,7 +34,7 @@ class ContentCountProvider extends BaseDataProvider implements TableDataProvider
             ->from('tt_content')
             ->executeQuery()
             ->fetchOne();
-        return ['Content total', $count];
+        return [$this->languageService->translateLLL('content_total'), $count];
     }
 
     protected function getContentTextOnly(): array
@@ -48,6 +51,6 @@ class ContentCountProvider extends BaseDataProvider implements TableDataProvider
             )
             ->executeQuery()
             ->fetchOne();
-        return ['Text-only content', $count];
+        return [$this->languageService->translateLLL('content_text'), $count];
     }
 }

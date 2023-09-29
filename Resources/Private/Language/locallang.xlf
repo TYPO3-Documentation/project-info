@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<xliff version="1.0">
-    <file source-language="en" datatype="plaintext" original="project-info/Resources/Private/Language/locallang.xlf" date="2023-07-28T10:26:01Z">
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="EXT:project_info/Resources/Private/Language/locallang.xlf" product-name="project_info"  date="2023-07-28T10:26:01Z">
         <header />
         <body>
             <trans-unit id="title.technicalDocumentation" resname="title.technicalDocumentation">
                 <source>Technical Documentation of "%s"</source>
+            </trans-unit>
+            <trans-unit id="header.pages" resname="header.pages">
+                <source>Pages</source>
+            </trans-unit>
+            <trans-unit id="header.content" resname="header.pages">
+                <source>Content</source>
+            </trans-unit>
+            <trans-unit id="pages_total" resname="pages_total">
+                <source>Pages total</source>
+            </trans-unit>
+            <trans-unit id="pages_standard" resname="pages_standard">
+                <source>Pages standard</source>
+            </trans-unit>
+            <trans-unit id="content_total" resname="content_total">
+                <source>Content total</source>
+            </trans-unit>
+            <trans-unit id="content_text" resname="content_text">
+                <source>Content text-only</source>
             </trans-unit>
         </body>
     </file>

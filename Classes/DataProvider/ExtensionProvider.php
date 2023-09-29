@@ -68,7 +68,7 @@ class ExtensionProvider extends BaseDataProvider implements TableDataProvider
                 }
                 $data[] = [
                     RenderRstUtility::escape($package->getPackageKey()),
-                    RenderRstUtility::escape($source),
+                    RenderRstUtility::escape($composerName),
                     RenderRstUtility::escape($configuration['extensions'][$package->getPackageKey()]['version'] ?? $package->getPackageMetaData()->getVersion()),
                     RenderRstUtility::escape($configuration['extensions'][$package->getPackageKey()]['title'] ?? (string)$package->getPackageMetaData()->getTitle()),
                     RenderRstUtility::escape($configuration['extensions'][$package->getPackageKey()]['description'] ?? (string)$package->getPackageMetaData()->getDescription()),
