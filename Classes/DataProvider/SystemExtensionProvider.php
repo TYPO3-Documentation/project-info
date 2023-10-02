@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace T3docs\ProjectInfo\DataProvider;
 
 use T3docs\ProjectInfo\Component\Table;
+use T3docs\ProjectInfo\Utilities\LanguageService;
 use T3docs\ProjectInfo\Utilities\RenderRstUtility;
 use TYPO3\CMS\Core\Package\PackageManager;
 
@@ -14,18 +15,24 @@ class SystemExtensionProvider extends BaseDataProvider implements TableDataProvi
     protected string $header = 'System Extensions';
 
     public function __construct(
-        private readonly PackageManager $packageManager
+        private readonly PackageManager $packageManager,
+        LanguageService $languageService
     ) {
+        parent::__construct($languageService);
     }
 
     public function provide(): Table
     {
-        $data = [[
-            'Extension Key',
-            'Version',
-            'Title',
-            'Description',
-        ]];
+        $labels = [
+            'key',
+            'version',
+            'title',
+            'description',
+        ];
+        $labels = array_map(function ($value) {
+            return $this->languageService->translateLocalLLL('extensions.' . $value);
+        }, $labels);
+        $data = [$labels];
         $packages = $this->packageManager->getActivePackages();
         usort($packages, fn ($a, $b) => strcmp((string)$a->getPackageKey(), (string)$b->getPackageKey()));
         foreach ($packages as $package) {

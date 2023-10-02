@@ -15,6 +15,7 @@ use T3docs\ProjectInfo\DataProvider\BeUserGroupTableProvider;
 use T3docs\ProjectInfo\DataProvider\ContentCountProvider;
 use T3docs\ProjectInfo\DataProvider\ExtensionProvider;
 use T3docs\ProjectInfo\DataProvider\PagesCountProvider;
+use T3docs\ProjectInfo\DataProvider\SchedulerProvider;
 use T3docs\ProjectInfo\DataProvider\SystemExtensionProvider;
 use T3docs\ProjectInfo\Renderer\ExtensionRenderer;
 use T3docs\ProjectInfo\Renderer\TableRenderer;
@@ -24,13 +25,14 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class TechnicalDocumentationCommand extends AbstractCommand
 {
     public function __construct(
-        private readonly PagesCountProvider $pagesCountProvider,
-        private readonly ContentCountProvider $contentCountProvider,
-        private readonly BeUserGroupProvider $beUserGroupProvider,
+        private readonly PagesCountProvider       $pagesCountProvider,
+        private readonly ContentCountProvider     $contentCountProvider,
+        private readonly BeUserGroupProvider      $beUserGroupProvider,
         private readonly BeUserGroupTableProvider $beUserGroupTableProvider,
-        private readonly ExtensionProvider $extensionProvider,
-        private readonly SystemExtensionProvider $systemExtensionProvider,
-        private readonly ConfigurationManager $configurationManager
+        private readonly ExtensionProvider        $extensionProvider,
+        private readonly SystemExtensionProvider  $systemExtensionProvider,
+        private readonly SchedulerProvider        $schedulerProvider,
+        private readonly ConfigurationManager     $configurationManager
     )
     {
         parent::__construct();
@@ -73,7 +75,7 @@ class TechnicalDocumentationCommand extends AbstractCommand
         );
         $config['settings']['projectTitle'] = $config['settings']['projectTitle'] ?? (string)$this->io->ask(
             'Enter the project title',
-            $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename']??'My new site'
+            $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'] ?? 'My new site'
         );
         $config['settings']['version'] = $config['settings']['version'] ?? (string)$this->io->ask(
             'Enter the version of this documentation',
@@ -90,12 +92,11 @@ class TechnicalDocumentationCommand extends AbstractCommand
         $dataProviders = [
             $this->beUserGroupProvider,
             $this->beUserGroupTableProvider,
-            /*
             $this->pagesCountProvider,
             $this->contentCountProvider,
+            $this->schedulerProvider,
             $this->extensionProvider,
             $this->systemExtensionProvider,
-            */
         ];
         $renderers = [
             new ExtensionRenderer(),

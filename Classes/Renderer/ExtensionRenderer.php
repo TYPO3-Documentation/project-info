@@ -24,12 +24,12 @@ class ExtensionRenderer implements Renderer
         $data = $table->getData();
         $header = array_shift($data);
         foreach ($data as $extension) {
-            $rst .=  RenderRstUtility::renderHeadLine($extension[0]) . "\n\n";
+            $rst .=  RenderRstUtility::renderHeadLine($extension[0], 2) . "\n\n";
             for ($i = 1; $i < (is_countable($extension) ? count($extension) : 0); $i++) {
                 if (isset($header[$i])) {
-                    $rst .=  '' . $header[$i] . "\n";
+                    $rst .= sprintf("*   **%s**: ", $header[$i]) ;
                 }
-                $rst .= RenderRstUtility::indent(RenderRstUtility::wrapTextAtMaxLength($extension[$i], 76)) . "\n";
+                $rst .= $extension[$i] . "\n";
             }
             $rst .= "\n\n";
         }

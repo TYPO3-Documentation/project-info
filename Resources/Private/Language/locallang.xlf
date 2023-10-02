@@ -30,6 +30,39 @@
             <trans-unit id="be_groups.count" resname="be_groups.count">
                 <source># User</source>
             </trans-unit>
+            <trans-unit id="tables" resname="tables">
+                <source>tables</source>
+            </trans-unit>
+            <trans-unit id="extensions.key" resname="extensions.composer">
+                <source>Extension key</source>
+            </trans-unit>
+            <trans-unit id="extensions.composer" resname="extensions.composer">
+                <source>Composer name</source>
+            </trans-unit>
+            <trans-unit id="extensions.version" resname="extensions.version">
+                <source>Version</source>
+            </trans-unit>
+            <trans-unit id="extensions.title" resname="extensions.title">
+                <source>Titel</source>
+            </trans-unit>
+            <trans-unit id="extensions.description" resname="extensions.description">
+                <source>Description</source>
+            </trans-unit>
+            <trans-unit id="extensions.source" resname="extensions.source">
+                <source>Source</source>
+            </trans-unit>
+            <trans-unit id="tx_scheduler_task.uid" resname="tx_scheduler_task.uid">
+                <source>Id</source>
+            </trans-unit>
+            <trans-unit id="tx_scheduler_task.uid" resname="tx_scheduler_task.uid">
+                <source>Id</source>
+            </trans-unit>
+            <trans-unit id="tx_scheduler_task.description" resname="tx_scheduler_task.description">
+                <source>Description</source>
+            </trans-unit>
+            <trans-unit id="tx_scheduler_task.groupName" resname="tx_scheduler_task.groupName">
+                <source>Group</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>

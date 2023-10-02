@@ -46,7 +46,7 @@ class PagesCountProvider extends BaseDataProvider implements TableDataProvider
             ->count('uid')
             ->from('pages')
             ->where(
-                $queryBuilder->expr()->eq('doktype', 1)
+                $queryBuilder->expr()->eq('doktype', 1),
             )
             ->executeQuery()
             ->fetchOne();

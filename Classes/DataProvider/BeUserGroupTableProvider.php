@@ -50,7 +50,7 @@ class BeUserGroupTableProvider extends BaseDataProvider implements TableDataProv
             return isset($GLOBALS['TCA'][$value]['ctrl']['title'])? $this->languageService->translateLLL($GLOBALS['TCA'][$value]['ctrl']['title']) : $value;
         }, $tables);
         $tables = array_values($tables);
-        $data = [array_merge(['title'], $tableLabels)];
+        $data = [array_merge([$this->languageService->translateLocalLLL('tables')], $tableLabels)];
         foreach ($result as $row) {
             $rowData = [$row['title']];
             $selectTables = array_map('trim', explode(',', $row['tables_select']));

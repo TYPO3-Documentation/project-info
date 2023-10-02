@@ -8,6 +8,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use T3docs\ProjectInfo\Component\Table;
 use T3docs\ProjectInfo\ConfigurationManager;
+use T3docs\ProjectInfo\Utilities\LanguageService;
 use T3docs\ProjectInfo\Utilities\RenderRstUtility;
 use TYPO3\CMS\Core\Package\PackageManager;
 
@@ -18,21 +19,27 @@ class ExtensionProvider extends BaseDataProvider implements TableDataProvider
 
     public function __construct(
         private readonly PackageManager $packageManager,
-        private readonly ConfigurationManager $configurationManager
+        private readonly ConfigurationManager $configurationManager,
+        LanguageService $languageService
     ) {
+        parent::__construct($languageService);
     }
 
     public function provide(): Table
     {
         $packagistBaseUrl = 'https://packagist.org';
-        $data = [[
-            'Extension Key',
-            'Composer Name',
-            'Version',
-            'Title',
-            'Description',
-            'Source',
-        ]];
+        $labels = [
+            'key',
+            'composer',
+            'version',
+            'title',
+            'description',
+            'source',
+        ];
+        $labels = array_map(function ($value) {
+            return $this->languageService->translateLocalLLL('extensions.' . $value);
+        }, $labels);
+        $data = [$labels];
         $packages = $this->packageManager->getActivePackages();
         usort($packages, fn ($a, $b) => strcmp((string)$a->getPackageKey(), (string)$b->getPackageKey()));
         $configuration = $this->configurationManager->getConfiguration();
