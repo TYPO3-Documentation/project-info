@@ -14,7 +14,6 @@ use T3docs\ProjectInfo\DataProvider\BeUserGroupProvider;
 use T3docs\ProjectInfo\DataProvider\BeUserGroupTableProvider;
 use T3docs\ProjectInfo\DataProvider\ContentCountProvider;
 use T3docs\ProjectInfo\DataProvider\ExtensionProvider;
-use T3docs\ProjectInfo\DataProvider\PagesCountProvider;
 use T3docs\ProjectInfo\DataProvider\SchedulerProvider;
 use T3docs\ProjectInfo\DataProvider\SystemExtensionProvider;
 use T3docs\ProjectInfo\Renderer\ExtensionRenderer;
@@ -25,7 +24,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class TechnicalDocumentationCommand extends AbstractCommand
 {
     public function __construct(
-        private readonly PagesCountProvider       $pagesCountProvider,
         private readonly ContentCountProvider     $contentCountProvider,
         private readonly BeUserGroupProvider      $beUserGroupProvider,
         private readonly BeUserGroupTableProvider $beUserGroupTableProvider,
@@ -92,7 +90,6 @@ class TechnicalDocumentationCommand extends AbstractCommand
         $dataProviders = [
             $this->beUserGroupProvider,
             $this->beUserGroupTableProvider,
-            $this->pagesCountProvider,
             $this->contentCountProvider,
             $this->schedulerProvider,
             $this->extensionProvider,

@@ -75,6 +75,32 @@
                 <source>Group</source>
                 <target>Thema</target>
             </trans-unit>
+            <trans-unit id="pages.total" resname="pages.total">
+                <source>Pages total</source>
+                <target>Seiten gesamt</target>
+            </trans-unit>
+            <trans-unit id="pages.doktype.1" resname="pages.doktype.1">
+                <source>Normal Pages</source>
+                <target>Redaktionelle Seiten</target>
+            </trans-unit>
+            <trans-unit id="tt_content.total" resname="tt_content.total">
+                <source>Content Elements total</source>
+                <target>Inhaltselemente Gesamt</target>
+            </trans-unit>
+            <trans-unit id="tt_content.CType.text" resname="tt_content.CType.text">
+                <source>Content Elements "Text Only"</source>
+                <target>Inhaltselemente "Nur Text"</target>
+            </trans-unit>
+            <trans-unit id="sys_file.type.2" resname="sys_file.type.2">
+                <source>Images</source>
+                <target>Bilder</target>
+            </trans-unit>
+            <trans-unit id="sys_file.type.4" resname="sys_file.type.4">
+                <source>Videos</source>
+            </trans-unit>
+            <trans-unit id="sys_file.mime_type.application/pdf" resname="sys_file.mime_type.application/pdf">
+                <source>PDF</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>
