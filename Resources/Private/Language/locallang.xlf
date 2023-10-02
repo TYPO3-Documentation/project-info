@@ -24,6 +24,12 @@
             <trans-unit id="content_text" resname="content_text">
                 <source>Content text-only</source>
             </trans-unit>
+            <trans-unit id="be_groups.uid" resname="be_groups.uid">
+                <source>ID</source>
+            </trans-unit>
+            <trans-unit id="be_groups.count" resname="be_groups.count">
+                <source># User</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>

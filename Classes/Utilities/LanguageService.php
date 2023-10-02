@@ -15,11 +15,25 @@ class LanguageService
     {
     }
 
-
     public function translateLLL(string $lll): string
     {
         $languageService = $this->languageServiceFactory->create($this->locale);
-        return $languageService->sL(self::PREFIX . $lll);
+        if (!str_starts_with($lll, 'LLL')) {
+            return $lll;
+        }
+        $languageService = $this->languageServiceFactory->create($this->locale);
+        return $languageService->sL($lll);
+    }
+
+    public function translateLocalLLL(string $lll): string
+    {
+
+        if (!str_starts_with($lll, 'LLL')) {
+            $translated = $this->translateLLL(self::PREFIX . $lll);
+        } else {
+            $translated = $this->translateLLL($lll);
+        }
+        return$translated !== '' ? $translated : $lll;
     }
 
     public function getLocale(): string

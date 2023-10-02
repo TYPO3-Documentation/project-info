@@ -10,6 +10,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use T3docs\ProjectInfo\Component\TechnicalDocumentation;
 use T3docs\ProjectInfo\ConfigurationManager;
+use T3docs\ProjectInfo\DataProvider\BeUserGroupProvider;
+use T3docs\ProjectInfo\DataProvider\BeUserGroupTableProvider;
 use T3docs\ProjectInfo\DataProvider\ContentCountProvider;
 use T3docs\ProjectInfo\DataProvider\ExtensionProvider;
 use T3docs\ProjectInfo\DataProvider\PagesCountProvider;
@@ -24,6 +26,8 @@ class TechnicalDocumentationCommand extends AbstractCommand
     public function __construct(
         private readonly PagesCountProvider $pagesCountProvider,
         private readonly ContentCountProvider $contentCountProvider,
+        private readonly BeUserGroupProvider $beUserGroupProvider,
+        private readonly BeUserGroupTableProvider $beUserGroupTableProvider,
         private readonly ExtensionProvider $extensionProvider,
         private readonly SystemExtensionProvider $systemExtensionProvider,
         private readonly ConfigurationManager $configurationManager
@@ -84,10 +88,14 @@ class TechnicalDocumentationCommand extends AbstractCommand
 
         $this->configurationManager->setConfiguration($config);
         $dataProviders = [
+            $this->beUserGroupProvider,
+            $this->beUserGroupTableProvider,
+            /*
             $this->pagesCountProvider,
             $this->contentCountProvider,
             $this->extensionProvider,
             $this->systemExtensionProvider,
+            */
         ];
         $renderers = [
             new ExtensionRenderer(),

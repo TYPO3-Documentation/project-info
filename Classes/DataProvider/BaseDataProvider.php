@@ -23,6 +23,6 @@ abstract class BaseDataProvider implements DataProvider
 
     public function getHeader(): string
     {
-        return $this->languageService->translateLLL($this->header);
+        return $this->languageService->translateLocalLLL($this->header);
     }
 }

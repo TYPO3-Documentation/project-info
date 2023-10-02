@@ -36,7 +36,7 @@ class PagesCountProvider extends BaseDataProvider implements TableDataProvider
             ->from('pages')
             ->executeQuery()
             ->fetchOne();
-        return [$this->languageService->translateLLL('pages_total'), $count];
+        return [$this->languageService->translateLocalLLL('pages_total'), $count];
     }
 
     protected function getPagesStandard(): array
@@ -50,6 +50,6 @@ class PagesCountProvider extends BaseDataProvider implements TableDataProvider
             )
             ->executeQuery()
             ->fetchOne();
-        return [$this->languageService->translateLLL('pages_standard'), $count];
+        return [$this->languageService->translateLocalLLL('pages_standard'), $count];
     }
 }

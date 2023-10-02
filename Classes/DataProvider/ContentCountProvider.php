@@ -34,7 +34,7 @@ class ContentCountProvider extends BaseDataProvider implements TableDataProvider
             ->from('tt_content')
             ->executeQuery()
             ->fetchOne();
-        return [$this->languageService->translateLLL('content_total'), $count];
+        return [$this->languageService->translateLocalLLL('content_total'), $count];
     }
 
     protected function getContentTextOnly(): array
@@ -51,6 +51,6 @@ class ContentCountProvider extends BaseDataProvider implements TableDataProvider
             )
             ->executeQuery()
             ->fetchOne();
-        return [$this->languageService->translateLLL('content_text'), $count];
+        return [$this->languageService->translateLocalLLL('content_text'), $count];
     }
 }

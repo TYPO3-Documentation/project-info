@@ -31,7 +31,10 @@ class TableRenderer implements Renderer
             $line = '';
             foreach ($row as $key => $field) {
                 $line = ($line==='')?'':$line . '  ';
-                $line .= (string)$field . str_repeat(' ', $tableCount[$key] - mb_strlen((string)$field, 'UTF-8'));
+                $line .= (string)$field;
+                if ($tableCount[$key] - mb_strlen((string)$field, 'UTF-8') > 0) {
+                    $line .= str_repeat(' ', $tableCount[$key] - mb_strlen((string)$field, 'UTF-8'));
+                }
             }
             $rst .= $line . "\n";
             if ($rowCount === 0) {
@@ -49,7 +52,9 @@ class TableRenderer implements Renderer
         $rst = '';
         foreach ($tableCount as $fieldCount) {
             $rst = ($rst==='')?'':$rst . '  ';
-            $rst .= str_repeat('=', (int)$fieldCount);
+            if ($fieldCount > 0) {
+                $rst .= str_repeat('=', (int)$fieldCount);
+            }
         }
         $rst .= "\n";
         return $rst;
@@ -59,7 +64,7 @@ class TableRenderer implements Renderer
     {
         $tableCount = [];
         foreach ($table->getData() as $row) {
-            foreach ($row as $key => $field) {
+            foreach (array_values($row) as $key => $field) {
                 if (!isset($tableCount[$key])) {
                     $tableCount[$key] = 0;
                 }
