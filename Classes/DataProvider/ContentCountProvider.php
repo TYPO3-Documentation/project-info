@@ -29,6 +29,21 @@ class ContentCountProvider extends BaseDataProvider implements TableDataProvider
                 ['pages', 'doktype', '1'],
                 ['tt_content'],
                 ['tt_content', 'CType', 'text'],
+                [
+                    'sys_file',
+                    'type',
+                    '4',
+                ],
+                [
+                    'sys_file',
+                    'type',
+                    '2',
+                ],
+                [
+                    'sys_file',
+                    'mime_type',
+                    "application\/pdf",
+                ],
             ];
         }
         $data = [['Record', 'Count']];
@@ -67,7 +82,7 @@ class ContentCountProvider extends BaseDataProvider implements TableDataProvider
             ->from($table)
             ->where(
                 $queryBuilder->expr()->eq(
-                    $field,
+                    $queryBuilder->quoteIdentifier($field),
                     $queryBuilder->createNamedParameter($value)
                 )
             )
@@ -84,7 +99,7 @@ class ContentCountProvider extends BaseDataProvider implements TableDataProvider
             ->from($table)
             ->where(
                 $queryBuilder->expr()->like(
-                    $field,
+                    $queryBuilder->quoteIdentifier($field),
                     $queryBuilder->createNamedParameter($value)
                 )
             )
