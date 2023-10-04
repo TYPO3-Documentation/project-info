@@ -1,6 +1,7 @@
 <?php
 
 namespace T3docs\ProjectInfo;
+
 class ConfigurationManager
 {
     private array $configuration = [];
@@ -14,5 +15,4 @@ class ConfigurationManager
     {
         $this->configuration = $configuration;
     }
-
 }

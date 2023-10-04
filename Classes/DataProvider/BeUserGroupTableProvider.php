@@ -32,31 +32,27 @@ class BeUserGroupTableProvider extends BaseDataProvider implements TableDataProv
         foreach ($result as $row) {
             $tables = array_merge(
                 $tables,
-                array_map('trim', explode(',', $row['tables_select']))
+                array_map('trim', explode(',', (string)$row['tables_select']))
             );
             $tables = array_merge(
                 $tables,
-                array_map('trim', explode(',', $row['tables_modify']))
+                array_map('trim', explode(',', (string)$row['tables_modify']))
             );
         }
         // Remove duplicates
         $tables = array_unique($tables);
 
         // Remove empty strings
-        $tables = array_filter($tables, function ($value) {
-            return $value !== '' && isset($GLOBALS['TCA'][$value]);
-        });
-        $tableLabels = array_map(function ($value) {
-            return isset($GLOBALS['TCA'][$value]['ctrl']['title'])? $this->languageService->translateLLL($GLOBALS['TCA'][$value]['ctrl']['title']) : $value;
-        }, $tables);
+        $tables = array_filter($tables, fn ($value) => $value !== '' && isset($GLOBALS['TCA'][$value]));
+        $tableLabels = array_map(fn ($value) => isset($GLOBALS['TCA'][$value]['ctrl']['title'])? $this->languageService->translateLLL($GLOBALS['TCA'][$value]['ctrl']['title']) : $value, $tables);
         $tables = array_values($tables);
-        $data = [array_merge([$this->languageService->translateLocalLLL('tables')], $tableLabels)];
+        $data = [[$this->languageService->translateLocalLLL('tables'), ...$tableLabels]];
         foreach ($result as $row) {
             $rowData = [$row['title']];
-            $selectTables = array_map('trim', explode(',', $row['tables_select']));
-            $modifyTables = array_map('trim', explode(',', $row['tables_modify']));
+            $selectTables = array_map('trim', explode(',', (string)$row['tables_select']));
+            $modifyTables = array_map('trim', explode(',', (string)$row['tables_modify']));
             $hasRight = false;
-            foreach($tables as $table) {
+            foreach ($tables as $table) {
                 if (in_array($table, $modifyTables)) {
                     $rowData[] = 'W';
                     $hasRight = true;
@@ -66,7 +62,7 @@ class BeUserGroupTableProvider extends BaseDataProvider implements TableDataProv
                 } else {
                     $rowData[] = '0';
                 }
-            };
+            }
             if ($hasRight) {
                 $data[] = $rowData;
             }
@@ -80,5 +76,4 @@ class BeUserGroupTableProvider extends BaseDataProvider implements TableDataProv
 
         return new Table($flippedArray);
     }
-
 }

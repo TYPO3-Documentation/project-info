@@ -11,8 +11,7 @@ class LanguageService
 
     public function __construct(
         private readonly LanguageServiceFactory $languageServiceFactory
-    )
-    {
+    ) {
     }
 
     public function translateLLL(string $lll): string
@@ -27,7 +26,6 @@ class LanguageService
 
     public function translateLocalLLL(string $lll): string
     {
-
         if (!str_starts_with($lll, 'LLL')) {
             $translated = $this->translateLLL(self::PREFIX . $lll);
         } else {

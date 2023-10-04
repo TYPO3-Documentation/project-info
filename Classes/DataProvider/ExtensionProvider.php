@@ -36,9 +36,7 @@ class ExtensionProvider extends BaseDataProvider implements TableDataProvider
             'description',
             'source',
         ];
-        $labels = array_map(function ($value) {
-            return $this->languageService->translateLocalLLL('extensions.' . $value);
-        }, $labels);
+        $labels = array_map(fn ($value) => $this->languageService->translateLocalLLL('extensions.' . $value), $labels);
         $data = [$labels];
         $packages = $this->packageManager->getActivePackages();
         usort($packages, fn ($a, $b) => strcmp((string)$a->getPackageKey(), (string)$b->getPackageKey()));

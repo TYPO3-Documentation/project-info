@@ -24,15 +24,14 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class TechnicalDocumentationCommand extends AbstractCommand
 {
     public function __construct(
-        private readonly ContentCountProvider     $contentCountProvider,
-        private readonly BeUserGroupProvider      $beUserGroupProvider,
+        private readonly ContentCountProvider $contentCountProvider,
+        private readonly BeUserGroupProvider $beUserGroupProvider,
         private readonly BeUserGroupTableProvider $beUserGroupTableProvider,
-        private readonly ExtensionProvider        $extensionProvider,
-        private readonly SystemExtensionProvider  $systemExtensionProvider,
-        private readonly SchedulerProvider        $schedulerProvider,
-        private readonly ConfigurationManager     $configurationManager
-    )
-    {
+        private readonly ExtensionProvider $extensionProvider,
+        private readonly SystemExtensionProvider $systemExtensionProvider,
+        private readonly SchedulerProvider $schedulerProvider,
+        private readonly ConfigurationManager $configurationManager
+    ) {
         parent::__construct();
     }
 
@@ -54,7 +53,7 @@ class TechnicalDocumentationCommand extends AbstractCommand
             $config = file_get_contents($filePath);
 
             // Attempt to decode the JSON data into a PHP array
-            $config = json_decode($config, true);
+            $config = json_decode($config, true, 512, JSON_THROW_ON_ERROR);
 
             // Check if the JSON decoding was successful
             if ($config === null) {
@@ -67,19 +66,19 @@ class TechnicalDocumentationCommand extends AbstractCommand
         }
 
         $config['settings']['directory'] = $directory;
-        $config['settings']['language'] = $config['settings']['language'] ?? (string)$this->io->ask(
+        $config['settings']['language'] ??= (string)$this->io->ask(
             'In what language?',
             'en-US'
         );
-        $config['settings']['projectTitle'] = $config['settings']['projectTitle'] ?? (string)$this->io->ask(
+        $config['settings']['projectTitle'] ??= (string)$this->io->ask(
             'Enter the project title',
             $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'] ?? 'My new site'
         );
-        $config['settings']['version'] = $config['settings']['version'] ?? (string)$this->io->ask(
+        $config['settings']['version'] ??= (string)$this->io->ask(
             'Enter the version of this documentation',
             'main'
         );
-        $config['settings']['description'] = $config['settings']['description'] ?? (string)$this->io->ask(
+        $config['settings']['description'] ??= (string)$this->io->ask(
             'Enter the description',
             null
         );

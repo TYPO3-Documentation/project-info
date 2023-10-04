@@ -24,11 +24,9 @@ class SchedulerProvider extends BaseDataProvider implements TableDataProvider
     {
         $labels = ['uid', 'groupName', 'description'];
 
-        $labels = array_map(function ($value) {
-            return isset($GLOBALS['TCA']['tx_scheduler_task']['columns'][$value]['label'])?
-                $this->languageService->translateLLL($GLOBALS['TCA']['tx_scheduler_task']['columns'][$value]['label']) :
-                $this->languageService->translateLocalLLL('tx_scheduler_task.' . $value);
-        }, $labels);
+        $labels = array_map(fn ($value) => isset($GLOBALS['TCA']['tx_scheduler_task']['columns'][$value]['label'])?
+            $this->languageService->translateLLL($GLOBALS['TCA']['tx_scheduler_task']['columns'][$value]['label']) :
+            $this->languageService->translateLocalLLL('tx_scheduler_task.' . $value), $labels);
         $data = [$labels];
         $queryBuilder = $this->connectionPool->getQueryBuilderForTable('tx_scheduler_task');
         $result = $queryBuilder
@@ -54,5 +52,4 @@ class SchedulerProvider extends BaseDataProvider implements TableDataProvider
         }
         return new Table($data);
     }
-
 }

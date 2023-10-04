@@ -27,7 +27,7 @@ class ExtensionRenderer implements Renderer
             $rst .=  RenderRstUtility::renderHeadLine($extension[0], 2) . "\n\n";
             for ($i = 1; $i < (is_countable($extension) ? count($extension) : 0); $i++) {
                 if (isset($header[$i])) {
-                    $rst .= sprintf("*   **%s**: ", $header[$i]) ;
+                    $rst .= sprintf('*   **%s**: ', $header[$i]);
                 }
                 $rst .= $extension[$i] . "\n";
             }

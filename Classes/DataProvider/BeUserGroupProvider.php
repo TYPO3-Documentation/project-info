@@ -24,11 +24,9 @@ class BeUserGroupProvider extends BaseDataProvider implements TableDataProvider
     {
         $labels = ['uid', 'title', 'subgroup', 'description', 'count'];
 
-        $labels = array_map(function ($value) {
-            return isset($GLOBALS['TCA']['be_groups']['columns'][$value]['label'])?
-                $this->languageService->translateLLL($GLOBALS['TCA']['be_groups']['columns'][$value]['label']) :
-                $this->languageService->translateLocalLLL('be_groups.' . $value);
-        }, $labels);
+        $labels = array_map(fn ($value) => isset($GLOBALS['TCA']['be_groups']['columns'][$value]['label'])?
+            $this->languageService->translateLLL($GLOBALS['TCA']['be_groups']['columns'][$value]['label']) :
+            $this->languageService->translateLocalLLL('be_groups.' . $value), $labels);
         $data = [$labels];
         $queryBuilder = $this->connectionPool->getQueryBuilderForTable('be_groups');
         $result = $queryBuilder
@@ -49,5 +47,4 @@ class BeUserGroupProvider extends BaseDataProvider implements TableDataProvider
         }
         return new Table($data);
     }
-
 }
