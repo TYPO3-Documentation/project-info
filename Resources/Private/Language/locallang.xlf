@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="EXT:project_info/Resources/Private/Language/locallang.xlf" product-name="project_info"  date="2023-07-28T10:26:01Z">
+        <header />
+        <body>
+            <trans-unit id="title.technicalDocumentation" resname="title.technicalDocumentation">
+                <source>Technical Documentation of "%s"</source>
+            </trans-unit>
+            <trans-unit id="header.pages" resname="header.pages">
+                <source>Pages</source>
+            </trans-unit>
+            <trans-unit id="header.content" resname="header.pages">
+                <source>Content</source>
+            </trans-unit>
+            <trans-unit id="pages_total" resname="pages_total">
+                <source>Pages total</source>
+            </trans-unit>
+            <trans-unit id="pages_standard" resname="pages_standard">
+                <source>Pages standard</source>
+            </trans-unit>
+            <trans-unit id="content_total" resname="content_total">
+                <source>Content total</source>
+            </trans-unit>
+            <trans-unit id="content_text" resname="content_text">
+                <source>Content text-only</source>
+            </trans-unit>
+            <trans-unit id="be_groups.uid" resname="be_groups.uid">
+                <source>ID</source>
+            </trans-unit>
+            <trans-unit id="be_groups.count" resname="be_groups.count">
+                <source># User</source>
+            </trans-unit>
+            <trans-unit id="tables" resname="tables">
+                <source>tables</source>
+            </trans-unit>
+            <trans-unit id="extensions.key" resname="extensions.composer">
+                <source>Extension key</source>
+            </trans-unit>
+            <trans-unit id="extensions.composer" resname="extensions.composer">
+                <source>Composer name</source>
+            </trans-unit>
+            <trans-unit id="extensions.version" resname="extensions.version">
+                <source>Version</source>
+            </trans-unit>
+            <trans-unit id="extensions.title" resname="extensions.title">
+                <source>Titel</source>
+            </trans-unit>
+            <trans-unit id="extensions.description" resname="extensions.description">
+                <source>Description</source>
+            </trans-unit>
+            <trans-unit id="extensions.source" resname="extensions.source">
+                <source>Source</source>
+            </trans-unit>
+            <trans-unit id="tx_scheduler_task.uid" resname="tx_scheduler_task.uid">
+                <source>Id</source>
+            </trans-unit>
+            <trans-unit id="tx_scheduler_task.uid" resname="tx_scheduler_task.uid">
+                <source>Id</source>
+            </trans-unit>
+            <trans-unit id="tx_scheduler_task.description" resname="tx_scheduler_task.description">
+                <source>Description</source>
+            </trans-unit>
+            <trans-unit id="tx_scheduler_task.groupName" resname="tx_scheduler_task.groupName">
+                <source>Group</source>
+            </trans-unit>
+            <trans-unit id="pages.total" resname="pages.total">
+                <source>Pages total</source>
+            </trans-unit>
+            <trans-unit id="pages.doktype.1" resname="pages.doktype.1">
+                <source>Normal Pages</source>
+            </trans-unit>
+            <trans-unit id="tt_content.total" resname="tt_content.total">
+                <source>Content Elements total</source>
+            </trans-unit>
+            <trans-unit id="tt_content.CType.text" resname="tt_content.CType.text">
+                <source>Content Elements "Text Only"</source>
+            </trans-unit>
+            <trans-unit id="sys_file.type.2" resname="sys_file.type.2">
+                <source>Images</source>
+            </trans-unit>
+            <trans-unit id="sys_file.type.4" resname="sys_file.type.4">
+                <source>Videos</source>
+            </trans-unit>
+            <trans-unit id="sys_file.mime_type.application/pdf" resname="sys_file.mime_type.application/pdf">
+                <source>PDF</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

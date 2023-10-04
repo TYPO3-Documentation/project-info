@@ -9,17 +9,28 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use T3docs\ProjectInfo\Component\TechnicalDocumentation;
-use T3docs\ProjectInfo\Component\TechnicalDocumentation\RecordCount;
+use T3docs\ProjectInfo\ConfigurationManager;
+use T3docs\ProjectInfo\DataProvider\BeUserGroupProvider;
+use T3docs\ProjectInfo\DataProvider\BeUserGroupTableProvider;
 use T3docs\ProjectInfo\DataProvider\ContentCountProvider;
-use T3docs\ProjectInfo\DataProvider\PagesCountProvider;
+use T3docs\ProjectInfo\DataProvider\ExtensionProvider;
+use T3docs\ProjectInfo\DataProvider\SchedulerProvider;
+use T3docs\ProjectInfo\DataProvider\SystemExtensionProvider;
+use T3docs\ProjectInfo\Renderer\ExtensionRenderer;
+use T3docs\ProjectInfo\Renderer\TableRenderer;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TechnicalDocumentationCommand extends AbstractCommand
 {
     public function __construct(
-        private readonly PagesCountProvider $pagesCountProvider,
-        private readonly ContentCountProvider $contentCountProvider
+        private readonly ContentCountProvider $contentCountProvider,
+        private readonly BeUserGroupProvider $beUserGroupProvider,
+        private readonly BeUserGroupTableProvider $beUserGroupTableProvider,
+        private readonly ExtensionProvider $extensionProvider,
+        private readonly SystemExtensionProvider $systemExtensionProvider,
+        private readonly SchedulerProvider $schedulerProvider,
+        private readonly ConfigurationManager $configurationManager
     ) {
         parent::__construct();
     }
@@ -34,46 +45,81 @@ class TechnicalDocumentationCommand extends AbstractCommand
             'Where should the documentation be created?',
             $this->getProposalFromEnvironment('EXTENSION_DIR', 'docs/')
         );
-        $language = (string)$this->io->ask(
+
+        $filePath = $directory . 'config.json';
+
+        if (file_exists($filePath)) {
+            // Read the JSON file contents
+            $config = file_get_contents($filePath);
+
+            // Attempt to decode the JSON data into a PHP array
+            $config = json_decode($config, true, 512, JSON_THROW_ON_ERROR);
+
+            // Check if the JSON decoding was successful
+            if ($config === null) {
+                echo "JSON decoding of $filePath failed.";
+                $config = [];
+            }
+        } else {
+            echo "The JSON file $filePath does not exist.";
+            $config = [];
+        }
+
+        $config['settings']['directory'] = $directory;
+        $config['settings']['language'] ??= (string)$this->io->ask(
             'In what language?',
             'en-US'
         );
-        $projectTitle = (string)$this->io->ask(
+        $config['settings']['projectTitle'] ??= (string)$this->io->ask(
             'Enter the project title',
-            $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename']??'My new site'
+            $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'] ?? 'My new site'
         );
-        $version = (string)$this->io->ask(
+        $config['settings']['version'] ??= (string)$this->io->ask(
             'Enter the version of this documentation',
             'main'
         );
-        $description = (string)$this->io->ask(
+        $config['settings']['description'] ??= (string)$this->io->ask(
             'Enter the description',
             null
         );
-        $options = [
-            'directors' => $directory,
-            'language' => $language,
-        ];
 
-        $documentation = (new TechnicalDocumentation())
-            ->setOptions($options)
-            ->setProjectName($projectTitle)
-            ->setVersion($version)
-            ->setDescription($description);
+        $documentation = (new TechnicalDocumentation());
+
+        $this->configurationManager->setConfiguration($config);
+        $dataProviders = [
+            $this->beUserGroupProvider,
+            $this->beUserGroupTableProvider,
+            $this->contentCountProvider,
+            $this->schedulerProvider,
+            $this->extensionProvider,
+            $this->systemExtensionProvider,
+        ];
+        $renderers = [
+            new ExtensionRenderer(),
+            new TableRenderer(),
+        ];
 
         try {
             $absoluteDocsPath = $this->getAbsoluteDocsPath($directory);
-            $this->writeFile($absoluteDocsPath, 'index.rst', $documentation->__toString());
-            $recordCount = new RecordCount(
-                [
-                    $this->pagesCountProvider->getHeader() => $this->pagesCountProvider->provide(),
-                    $this->contentCountProvider->getHeader() => $this->contentCountProvider->provide(),
-                ]
-            );
-            $this->writeFile($absoluteDocsPath, 'recordCount.rst', $recordCount->__toString());
+            //$this->writeFile($absoluteDocsPath, 'index.rst', $documentation->__toString());
+            $absoluteIncludesPath = $this->getAbsoluteDocsPath($directory . '/_includes');
+            foreach ($dataProviders as $dataProvider) {
+                foreach ($renderers as $renderer) {
+                    if ($renderer->canRender($dataProvider)) {
+                        $this->writeFile($absoluteIncludesPath, $dataProvider->getFilename(), $renderer->render($dataProvider));
+                        break;
+                    }
+                }
+            }
         } catch (\Exception $exception) {
             $this->io->error($exception->getMessage());
             return Command::FAILURE;
+        }
+        $updatedConfigJsonData = json_encode($this->configurationManager->getConfiguration(), JSON_PRETTY_PRINT);
+        if (file_put_contents($filePath, $updatedConfigJsonData) !== false) {
+            echo "JSON data has been updated and written to the file $filePath. You can override the settings here. \n";
+        } else {
+            echo "Failed to write JSON data to the file $config.";
         }
         return Command::SUCCESS;
     }
@@ -99,7 +145,7 @@ class TechnicalDocumentationCommand extends AbstractCommand
         if (!file_exists($absoluteDocsPath)) {
             try {
                 GeneralUtility::mkdir_deep($absoluteDocsPath);
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 throw new \Exception('Creating of directory ' . $absoluteDocsPath . ' failed');
             }
         }

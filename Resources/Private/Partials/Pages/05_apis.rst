@@ -1,0 +1,32 @@
+..  include:: /Includes.rst.txt
+
+..  _api:
+
+=====================
+Schnittstellen (APIs)
+=====================
+
+get downloads
+=============
+Liefert die gesamte Downloads-Liste als json
+
+:URL:
+    http://api.meinprojekt.de/downloads
+:Methode:
+    `GET`
+:Parameter:
+    keine
+:Rückgabeformat:
+    JSON
+
+Beispiel::
+
+    {
+       "downloads": [
+          {
+             "url": www.link-zum-download.de/download.pdf,
+             "name": "Name Download 1",
+             "filetype”: "pdf”
+          },
+       ]
+    }
