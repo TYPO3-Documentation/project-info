@@ -1,8 +1,17 @@
+
+===========================================
+Partly Autogenerate Technical Documentation
+===========================================
+
 Install it
 ===========
 
+..  warning::
+    **Do not** install this extension on a production system. It gives access to
+    information you only want your fellow developers to see
+
 ::
-    ddev composer req t3docs/project-info
+    ddev composer req --dev t3docs/project-info
 
 Run it
 ======
