@@ -82,7 +82,7 @@ class ContentCountProvider extends BaseDataProvider implements TableDataProvider
             ->from($table)
             ->where(
                 $queryBuilder->expr()->eq(
-                    $queryBuilder->quoteIdentifier($field),
+                   $field,
                     $queryBuilder->createNamedParameter($value)
                 )
             )
@@ -99,7 +99,7 @@ class ContentCountProvider extends BaseDataProvider implements TableDataProvider
             ->from($table)
             ->where(
                 $queryBuilder->expr()->like(
-                    $queryBuilder->quoteIdentifier($field),
+                    $field,
                     $queryBuilder->createNamedParameter($value)
                 )
             )
