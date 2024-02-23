@@ -18,11 +18,14 @@ use T3docs\ProjectInfo\DataProvider\SchedulerProvider;
 use T3docs\ProjectInfo\DataProvider\SystemExtensionProvider;
 use T3docs\ProjectInfo\Renderer\ExtensionRenderer;
 use T3docs\ProjectInfo\Renderer\TableRenderer;
+use Twig\Environment as TwigEnvironment;
+use Twig\Loader\FilesystemLoader;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TechnicalDocumentationCommand extends AbstractCommand
 {
+    private bool $overrideAll = false;
     public function __construct(
         private readonly ContentCountProvider $contentCountProvider,
         private readonly BeUserGroupProvider $beUserGroupProvider,
@@ -74,6 +77,14 @@ class TechnicalDocumentationCommand extends AbstractCommand
             'Enter the project title',
             $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'] ?? 'My new site'
         );
+        $config['settings']['company'] ??= (string)$this->io->ask(
+            'Enter the name of the company providing the documentation',
+            'My Company'
+        );
+        $config['settings']['author'] ??= (string)$this->io->ask(
+            'Enter the name of the author providing the documentation',
+            'Me, myself and I'
+        );
         $config['settings']['version'] ??= (string)$this->io->ask(
             'Enter the version of this documentation',
             'main'
@@ -94,15 +105,38 @@ class TechnicalDocumentationCommand extends AbstractCommand
             $this->extensionProvider,
             $this->systemExtensionProvider,
         ];
+        $files = [
+            'Includes.rst.txt' => [],
+            'Index.rst' => [],
+            '01_project.rst' => [],
+            '02_frameworks.rst' => [],
+            '03_system.rst' => [],
+            '04_extensions.rst' => [],
+            '05_apis.rst' => [],
+            '06_userrights.rst' => [],
+            '07_cronjobs.rst' => [],
+            '08_serverpaths.rst' => [],
+            '09_contentcount.rst' => [],
+            '10_other.rst' => [],
+        ];
         $renderers = [
             new ExtensionRenderer(),
             new TableRenderer(),
         ];
+        // Specify our Twig templates location
+        $loader = new FilesystemLoader(__DIR__.'/../../Resources/Private/Templates/' . str_replace('-', '_', $config['settings']['language']));
 
+        $globalData = $config;
+        $globalData['global']['year'] = date('Y');
+        $globalData['global']['date'] = date('d.m.Y');
+
+        // Instantiate our Twig
+        $twig = new TwigEnvironment($loader);
         try {
             $absoluteDocsPath = $this->getAbsoluteDocsPath($directory);
             //$this->writeFile($absoluteDocsPath, 'index.rst', $documentation->__toString());
             $absoluteIncludesPath = $this->getAbsoluteDocsPath($directory . '/_includes');
+            $absolutePath = $this->getAbsoluteDocsPath($directory);
             foreach ($dataProviders as $dataProvider) {
                 foreach ($renderers as $renderer) {
                     if ($renderer->canRender($dataProvider)) {
@@ -110,6 +144,10 @@ class TechnicalDocumentationCommand extends AbstractCommand
                         break;
                     }
                 }
+            }
+            foreach ($files as $key => $fileConfig) {
+                $data = array_merge($globalData, $fileConfig['data'] ?? []);
+                $this->writeFile($absolutePath, $key, $twig->render($fileConfig['template']??$key . '.twig', $data));
             }
         } catch (\Exception $exception) {
             $this->io->error($exception->getMessage());
@@ -127,11 +165,19 @@ class TechnicalDocumentationCommand extends AbstractCommand
     private function writeFile(string $absoluteDocsPath, string $fileName, string $content): void
     {
         $absoluteFileName = rtrim($absoluteDocsPath, '/') . '/' . $fileName;
+        $options = ['Override', 'Skip', 'All'];
         if (file_exists($absoluteFileName)
-            && !$this->io->confirm('A ' . $fileName . ' does already exist. Do you want to override it?', true)
         ) {
-            $this->io->note('Creating ' . $fileName . ' skipped');
-        } elseif (!GeneralUtility::writeFile($absoluteFileName, $content, true)) {
+            if (!$this->overrideAll) {
+                $choice = strtolower($this->io->choice('A ' . $fileName . ' does already exist. Do you want to override it?', $options, 'Override'));
+                $this->overrideAll = $choice === 'all' || $choice === 'a';
+                if ($choice === 'skip' || $choice === 's') {
+                    $this->io->note('Creating ' . $fileName . ' skipped');
+                    return;
+                }
+            }
+        }
+        if (!GeneralUtility::writeFile($absoluteFileName, $content, true)) {
             throw new \Exception('Creating ' . $fileName . ' failed');
         }
     }

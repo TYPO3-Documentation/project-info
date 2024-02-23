@@ -8,7 +8,8 @@
     "require": {
         "typo3/cms-core": "^12.0",
 		"b13/make": "^0.1.6",
-        "guzzlehttp/guzzle": "^7.8"
+        "guzzlehttp/guzzle": "^7.8",
+        "twig/twig": "^3.0"
     },
     "autoload": {
         "psr-4": {
