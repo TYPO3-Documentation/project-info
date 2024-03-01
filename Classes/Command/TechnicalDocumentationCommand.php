@@ -26,6 +26,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class TechnicalDocumentationCommand extends AbstractCommand
 {
     private bool $overrideAll = false;
+    private bool $overrideAllIncludes = false;
     public function __construct(
         private readonly ContentCountProvider $contentCountProvider,
         private readonly BeUserGroupProvider $beUserGroupProvider,
@@ -136,18 +137,17 @@ class TechnicalDocumentationCommand extends AbstractCommand
             $absoluteDocsPath = $this->getAbsoluteDocsPath($directory);
             //$this->writeFile($absoluteDocsPath, 'index.rst', $documentation->__toString());
             $absoluteIncludesPath = $this->getAbsoluteDocsPath($directory . '/_includes');
-            $absolutePath = $this->getAbsoluteDocsPath($directory);
             foreach ($dataProviders as $dataProvider) {
                 foreach ($renderers as $renderer) {
                     if ($renderer->canRender($dataProvider)) {
-                        $this->writeFile($absoluteIncludesPath, $dataProvider->getFilename(), $renderer->render($dataProvider));
+                        $this->writeIncludeFile($absoluteIncludesPath, $dataProvider->getFilename(), $renderer->render($dataProvider));
                         break;
                     }
                 }
             }
             foreach ($files as $key => $fileConfig) {
                 $data = array_merge($globalData, $fileConfig['data'] ?? []);
-                $this->writeFile($absolutePath, $key, $twig->render($fileConfig['template']??$key . '.twig', $data));
+                $this->writeFile($absoluteDocsPath, $key, $twig->render($fileConfig['template']??$key . '.twig', $data));
             }
         } catch (\Exception $exception) {
             $this->io->error($exception->getMessage());
@@ -162,6 +162,27 @@ class TechnicalDocumentationCommand extends AbstractCommand
         return Command::SUCCESS;
     }
 
+
+    private function writeIncludeFile(string $absoluteDocsPath, string $fileName, string $content): void
+    {
+        $absoluteFileName = rtrim($absoluteDocsPath, '/') . '/' . $fileName;
+        $options = ['All', 'Override', 'Skip'];
+        if (file_exists($absoluteFileName)
+        ) {
+            if (!$this->overrideAllIncludes) {
+                $choice = strtolower($this->io->choice('An include ' . $fileName . ' does already exist. Do you want to override it?', $options, 'Override'));
+                $this->overrideAllIncludes = $choice === 'all' || $choice === 'a';
+                if ($choice === 'skip' || $choice === 's') {
+                    $this->io->note('Creating ' . $fileName . ' skipped');
+                    return;
+                }
+            }
+        }
+        if (!GeneralUtility::writeFile($absoluteFileName, $content, true)) {
+            throw new \Exception('Creating ' . $fileName . ' failed');
+        }
+    }
+
     private function writeFile(string $absoluteDocsPath, string $fileName, string $content): void
     {
         $absoluteFileName = rtrim($absoluteDocsPath, '/') . '/' . $fileName;
@@ -169,7 +190,7 @@ class TechnicalDocumentationCommand extends AbstractCommand
         if (file_exists($absoluteFileName)
         ) {
             if (!$this->overrideAll) {
-                $choice = strtolower($this->io->choice('A ' . $fileName . ' does already exist. Do you want to override it?', $options, 'Override'));
+                $choice = strtolower($this->io->choice('A ' . $fileName . ' does already exist. Do you want to override it?', $options, 'All'));
                 $this->overrideAll = $choice === 'all' || $choice === 'a';
                 if ($choice === 'skip' || $choice === 's') {
                     $this->io->note('Creating ' . $fileName . ' skipped');
