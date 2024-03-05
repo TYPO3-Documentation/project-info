@@ -42,47 +42,56 @@ class ExtensionProvider extends BaseDataProvider implements TableDataProvider
         usort($packages, fn ($a, $b) => strcmp((string)$a->getPackageKey(), (string)$b->getPackageKey()));
         $configuration = $this->configurationManager->getConfiguration();
         foreach ($packages as $package) {
-            if (
-                !$package->getPackageMetaData()->isFrameworkType()
-                && $this->packageManager->isPackageActive($package->getPackageKey())
-                && $package->getPackageMetaData()->isExtensionType()
-            ) {
-                $composerName = (string)$package->getValueFromComposerManifest('name');
-                $version = $package->getPackageMetaData()->getVersion();
-                if (isset($configuration['extensions'][$package->getPackageKey()]['source'])) {
-                    $source = $configuration['extensions'][$package->getPackageKey()]['source'];
-                } else {
-                    $client = new Client();
-                    try {
-                        $response = $client->get("$packagistBaseUrl/packages/$composerName.json");
-                        if ($response->getStatusCode() !== 200) {
-                            $source = 'other / local';
-                        } else {
-                            $packageData = json_decode((string)$response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
-                            if (isset($packageData['package']['versions'][$version])) {
-                                $source = 'https://packagist.org/packages/' . $composerName . '#' . $version;
-                            } elseif (isset($packageData['package']['versions']['v' . $version])) {
-                                $source = 'https://packagist.org/packages/' . $composerName . '#v' . $version;
-                            } else {
-                                $source = 'version not in packagist';
-                            }
-                        }
-                    } catch (RequestException) {
+            if (!$package->getPackageMetaData()->isExtensionType()) {
+                // ignore packages that are no extensions
+            }
+            if ($package->getPackageMetaData()->isFrameworkType()) {
+                // ignore system extensions
+                continue;
+            }
+            if (!$this->packageManager->isPackageActive($package->getPackageKey())) {
+                // ignore disabled extensions
+                continue;
+            }
+            if ($configuration['extensions'][$package->getPackageKey()]['ignore']??0 === 1) {
+                // ignore extensions configured to be ignored
+                continue;
+            }
+            $composerName = (string)$package->getValueFromComposerManifest('name');
+            $version = $package->getPackageMetaData()->getVersion();
+            if (isset($configuration['extensions'][$package->getPackageKey()]['source'])) {
+                $source = $configuration['extensions'][$package->getPackageKey()]['source'];
+            } else {
+                $client = new Client();
+                try {
+                    $response = $client->get("$packagistBaseUrl/packages/$composerName.json");
+                    if ($response->getStatusCode() !== 200) {
                         $source = 'other / local';
+                    } else {
+                        $packageData = json_decode((string)$response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+                        if (isset($packageData['package']['versions'][$version])) {
+                            $source = 'https://packagist.org/packages/' . $composerName . '#' . $version;
+                        } elseif (isset($packageData['package']['versions']['v' . $version])) {
+                            $source = 'https://packagist.org/packages/' . $composerName . '#v' . $version;
+                        } else {
+                            $source = 'version not in packagist';
+                        }
                     }
+                } catch (RequestException) {
+                    $source = 'other / local';
                 }
-                $data[] = [
-                    RenderRstUtility::escape($package->getPackageKey()),
-                    RenderRstUtility::escape($composerName),
-                    RenderRstUtility::escape($configuration['extensions'][$package->getPackageKey()]['version'] ?? $package->getPackageMetaData()->getVersion()),
-                    RenderRstUtility::escape($configuration['extensions'][$package->getPackageKey()]['title'] ?? (string)$package->getPackageMetaData()->getTitle()),
-                    RenderRstUtility::escape($configuration['extensions'][$package->getPackageKey()]['description'] ?? (string)$package->getPackageMetaData()->getDescription()),
-                    $source,
-                ];
+            }
+            $data[] = [
+                RenderRstUtility::escape($package->getPackageKey()),
+                RenderRstUtility::escape($composerName),
+                RenderRstUtility::escape($configuration['extensions'][$package->getPackageKey()]['version'] ?? $package->getPackageMetaData()->getVersion()),
+                RenderRstUtility::escape($configuration['extensions'][$package->getPackageKey()]['title'] ?? (string)$package->getPackageMetaData()->getTitle()),
+                RenderRstUtility::escape($configuration['extensions'][$package->getPackageKey()]['description'] ?? (string)$package->getPackageMetaData()->getDescription()),
+                $source,
+            ];
 
-                if (!isset($configuration['extensions'][$package->getPackageKey()])) {
-                    $configuration['extensions'][$package->getPackageKey()] = [];
-                }
+            if (!isset($configuration['extensions'][$package->getPackageKey()])) {
+                $configuration['extensions'][$package->getPackageKey()] = [];
             }
         }
         $this->configurationManager->setConfiguration($configuration);
