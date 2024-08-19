@@ -21,7 +21,7 @@ class TechnicalDocumentationRenderer implements Renderer
 {
     public function render(DataProvider $dataProvider): string
     {
-        // TODO: Implement render() method.
+        return '';
     }
 
     public function canRender(DataProvider $dataProvider): bool

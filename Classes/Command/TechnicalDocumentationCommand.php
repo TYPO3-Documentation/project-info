@@ -162,7 +162,7 @@ class TechnicalDocumentationCommand extends AbstractCommand
             }
         } catch (\Exception $exception) {
             $this->io->error($exception->getMessage());
-            return Command::FAILURE;
+            throw $exception;
         }
         $updatedConfigJsonData = json_encode($this->configurationManager->getConfiguration(), JSON_PRETTY_PRINT);
         if (file_put_contents($filePath, $updatedConfigJsonData) !== false) {

@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace T3docs\ProjectInfo\DataProvider;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 use T3docs\ProjectInfo\Component\Table;
 use T3docs\ProjectInfo\ConfigurationManager;
 use T3docs\ProjectInfo\Utilities\LanguageService;
@@ -90,7 +89,7 @@ class ExtensionProvider extends BaseDataProvider implements TableDataProvider
                             $source = 'version not in packagist';
                         }
                     }
-                } catch (RequestException) {
+                } catch (\Exception) {
                     $source = 'other / local';
                 }
             }
