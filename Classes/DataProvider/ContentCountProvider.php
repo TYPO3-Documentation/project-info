@@ -1,5 +1,18 @@
 <?php
 
+/*
+ * This file is part of the TYPO3 CMS project.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
+ */
+
 namespace T3docs\ProjectInfo\DataProvider;
 
 use T3docs\ProjectInfo\Component\Table;
@@ -15,7 +28,7 @@ class ContentCountProvider extends BaseDataProvider implements TableDataProvider
     public function __construct(
         private readonly ConnectionPool $connectionPool,
         private readonly ConfigurationManager $configurationManager,
-        LanguageService $languageService
+        LanguageService $languageService,
     ) {
         parent::__construct($languageService);
     }
@@ -49,12 +62,12 @@ class ContentCountProvider extends BaseDataProvider implements TableDataProvider
         $data = [['Record', 'Count']];
         foreach ($configuration['content'] as $content) {
             if ((is_countable($content) ? count($content) : 0) > 0 && (is_countable($content) ? count($content) : 0) < 3) {
-                $data[] = $this->getCountTotal($content[0], $content[1]??null);
+                $data[] = $this->getCountTotal($content[0], $content[1] ?? null);
             } elseif ((is_countable($content) ? count($content) : 0) < 5) {
                 if (str_contains((string)$content[2], '%')) {
-                    $data[] = $this->getCountWhereLike($content[0], $content[1], $content[2], $content[3]??null);
+                    $data[] = $this->getCountWhereLike($content[0], $content[1], $content[2], $content[3] ?? null);
                 } else {
-                    $data[] = $this->getCountWhereEquals($content[0], $content[1], $content[2], $content[3]??null);
+                    $data[] = $this->getCountWhereEquals($content[0], $content[1], $content[2], $content[3] ?? null);
                 }
             }
         }
@@ -82,9 +95,9 @@ class ContentCountProvider extends BaseDataProvider implements TableDataProvider
             ->from($table)
             ->where(
                 $queryBuilder->expr()->eq(
-                   $field,
-                    $queryBuilder->createNamedParameter($value)
-                )
+                    $field,
+                    $queryBuilder->createNamedParameter($value),
+                ),
             )
             ->executeQuery()
             ->fetchOne();
@@ -100,8 +113,8 @@ class ContentCountProvider extends BaseDataProvider implements TableDataProvider
             ->where(
                 $queryBuilder->expr()->like(
                     $field,
-                    $queryBuilder->createNamedParameter($value)
-                )
+                    $queryBuilder->createNamedParameter($value),
+                ),
             )
             ->executeQuery()
             ->fetchOne();

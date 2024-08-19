@@ -2,6 +2,19 @@
 
 declare(strict_types=1);
 
+/*
+ * This file is part of the TYPO3 CMS project.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
+ */
+
 namespace T3docs\ProjectInfo\Renderer;
 
 use T3docs\ProjectInfo\Component\Table;
@@ -30,7 +43,7 @@ class TableRenderer implements Renderer
         foreach ($table->getData() as $rowCount => $row) {
             $line = '';
             foreach ($row as $key => $field) {
-                $line = ($line==='')?'':$line . '  ';
+                $line = ($line === '') ? '' : $line . '  ';
                 $line .= (string)$field;
                 if ($tableCount[$key] - mb_strlen((string)$field, 'UTF-8') > 0) {
                     $line .= str_repeat(' ', $tableCount[$key] - mb_strlen((string)$field, 'UTF-8'));
@@ -51,7 +64,7 @@ class TableRenderer implements Renderer
     {
         $rst = '';
         foreach ($tableCount as $fieldCount) {
-            $rst = ($rst==='')?'':$rst . '  ';
+            $rst = ($rst === '') ? '' : $rst . '  ';
             if ($fieldCount > 0) {
                 $rst .= str_repeat('=', (int)$fieldCount);
             }

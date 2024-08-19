@@ -2,6 +2,19 @@
 
 declare(strict_types=1);
 
+/*
+ * This file is part of the TYPO3 CMS project.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
+ */
+
 namespace T3docs\ProjectInfo\Command;
 
 use B13\Make\Command\AbstractCommand;
@@ -34,20 +47,18 @@ class TechnicalDocumentationCommand extends AbstractCommand
         private readonly ExtensionProvider $extensionProvider,
         private readonly SystemExtensionProvider $systemExtensionProvider,
         private readonly SchedulerProvider $schedulerProvider,
-        private readonly ConfigurationManager $configurationManager
+        private readonly ConfigurationManager $configurationManager,
     ) {
         parent::__construct();
     }
 
-    protected function configure(): void
-    {
-    }
+    protected function configure(): void {}
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $directory = (string)$this->io->ask(
             'Where should the documentation be created?',
-            $this->getProposalFromEnvironment('EXTENSION_DIR', 'docs/')
+            $this->getProposalFromEnvironment('EXTENSION_DIR', 'docs/'),
         );
 
         $filePath = $directory . 'config.json';
@@ -72,27 +83,27 @@ class TechnicalDocumentationCommand extends AbstractCommand
         $config['settings']['directory'] = $directory;
         $config['settings']['language'] ??= (string)$this->io->ask(
             'In what language?',
-            'en-US'
+            'en-US',
         );
         $config['settings']['projectTitle'] ??= (string)$this->io->ask(
             'Enter the project title',
-            $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'] ?? 'My new site'
+            $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'] ?? 'My new site',
         );
         $config['settings']['company'] ??= (string)$this->io->ask(
             'Enter the name of the company providing the documentation',
-            'My Company'
+            'My Company',
         );
         $config['settings']['author'] ??= (string)$this->io->ask(
             'Enter the name of the author providing the documentation',
-            'Me, myself and I'
+            'Me, myself and I',
         );
         $config['settings']['version'] ??= (string)$this->io->ask(
             'Enter the version of this documentation',
-            'main'
+            'main',
         );
         $config['settings']['description'] ??= (string)$this->io->ask(
             'Enter the description',
-            null
+            null,
         );
 
         $documentation = (new TechnicalDocumentation());
@@ -125,7 +136,7 @@ class TechnicalDocumentationCommand extends AbstractCommand
             new TableRenderer(),
         ];
         // Specify our Twig templates location
-        $loader = new FilesystemLoader(__DIR__.'/../../Resources/Private/Templates/' . str_replace('-', '_', $config['settings']['language']));
+        $loader = new FilesystemLoader(__DIR__ . '/../../Resources/Private/Templates/' . str_replace('-', '_', $config['settings']['language']));
 
         $globalData = $config;
         $globalData['global']['year'] = date('Y');
@@ -147,11 +158,11 @@ class TechnicalDocumentationCommand extends AbstractCommand
             }
             foreach ($files as $key => $fileConfig) {
                 $data = array_merge($globalData, $fileConfig['data'] ?? []);
-                $this->writeFile($absoluteDocsPath, $key, $twig->render($fileConfig['template']??$key . '.twig', $data));
+                $this->writeFile($absoluteDocsPath, $key, $twig->render($fileConfig['template'] ?? $key . '.twig', $data));
             }
         } catch (\Exception $exception) {
             $this->io->error($exception->getMessage());
-            return Command::FAILURE;
+            throw $exception;
         }
         $updatedConfigJsonData = json_encode($this->configurationManager->getConfiguration(), JSON_PRETTY_PRINT);
         if (file_put_contents($filePath, $updatedConfigJsonData) !== false) {
@@ -161,7 +172,6 @@ class TechnicalDocumentationCommand extends AbstractCommand
         }
         return Command::SUCCESS;
     }
-
 
     private function writeIncludeFile(string $absoluteDocsPath, string $fileName, string $content): void
     {

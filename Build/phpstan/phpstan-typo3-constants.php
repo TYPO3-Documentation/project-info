@@ -13,19 +13,6 @@
  * The TYPO3 project - inspiring people to share!
  */
 
-namespace T3docs\ProjectInfo;
-
-class ConfigurationManager
-{
-    private array $configuration = [];
-
-    public function getConfiguration(): array
-    {
-        return $this->configuration;
-    }
-
-    public function setConfiguration(array $configuration): void
-    {
-        $this->configuration = $configuration;
-    }
-}
+defined('LF') ?: define('LF', chr(10));
+defined('CR') ?: define('CR', chr(13));
+defined('CRLF') ?: define('CRLF', CR . LF);
