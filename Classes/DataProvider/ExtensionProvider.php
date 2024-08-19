@@ -2,6 +2,19 @@
 
 declare(strict_types=1);
 
+/*
+ * This file is part of the TYPO3 CMS project.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
+ */
+
 namespace T3docs\ProjectInfo\DataProvider;
 
 use GuzzleHttp\Client;
@@ -20,7 +33,7 @@ class ExtensionProvider extends BaseDataProvider implements TableDataProvider
     public function __construct(
         private readonly PackageManager $packageManager,
         private readonly ConfigurationManager $configurationManager,
-        LanguageService $languageService
+        LanguageService $languageService,
     ) {
         parent::__construct($languageService);
     }
@@ -36,10 +49,10 @@ class ExtensionProvider extends BaseDataProvider implements TableDataProvider
             'description',
             'source',
         ];
-        $labels = array_map(fn ($value) => $this->languageService->translateLocalLLL('extensions.' . $value), $labels);
+        $labels = array_map(fn($value) => $this->languageService->translateLocalLLL('extensions.' . $value), $labels);
         $data = [$labels];
         $packages = $this->packageManager->getActivePackages();
-        usort($packages, fn ($a, $b) => strcmp((string)$a->getPackageKey(), (string)$b->getPackageKey()));
+        usort($packages, fn($a, $b) => strcmp((string)$a->getPackageKey(), (string)$b->getPackageKey()));
         $configuration = $this->configurationManager->getConfiguration();
         foreach ($packages as $package) {
             if (!$package->getPackageMetaData()->isExtensionType()) {
@@ -53,7 +66,7 @@ class ExtensionProvider extends BaseDataProvider implements TableDataProvider
                 // ignore disabled extensions
                 continue;
             }
-            if ($configuration['extensions'][$package->getPackageKey()]['ignore']??0 === 1) {
+            if ($configuration['extensions'][$package->getPackageKey()]['ignore'] ?? 0 === 1) {
                 // ignore extensions configured to be ignored
                 continue;
             }

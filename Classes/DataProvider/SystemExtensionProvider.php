@@ -2,6 +2,19 @@
 
 declare(strict_types=1);
 
+/*
+ * This file is part of the TYPO3 CMS project.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
+ */
+
 namespace T3docs\ProjectInfo\DataProvider;
 
 use T3docs\ProjectInfo\Component\Table;
@@ -16,7 +29,7 @@ class SystemExtensionProvider extends BaseDataProvider implements TableDataProvi
 
     public function __construct(
         private readonly PackageManager $packageManager,
-        LanguageService $languageService
+        LanguageService $languageService,
     ) {
         parent::__construct($languageService);
     }
@@ -29,10 +42,10 @@ class SystemExtensionProvider extends BaseDataProvider implements TableDataProvi
             'title',
             'description',
         ];
-        $labels = array_map(fn ($value) => $this->languageService->translateLocalLLL('extensions.' . $value), $labels);
+        $labels = array_map(fn($value) => $this->languageService->translateLocalLLL('extensions.' . $value), $labels);
         $data = [$labels];
         $packages = $this->packageManager->getActivePackages();
-        usort($packages, fn ($a, $b) => strcmp((string)$a->getPackageKey(), (string)$b->getPackageKey()));
+        usort($packages, fn($a, $b) => strcmp((string)$a->getPackageKey(), (string)$b->getPackageKey()));
         foreach ($packages as $package) {
             if (
                 $package->getPackageMetaData()->isFrameworkType()

@@ -2,6 +2,19 @@
 
 declare(strict_types=1);
 
+/*
+ * This file is part of the TYPO3 CMS project.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
+ */
+
 namespace T3docs\ProjectInfo\DataProvider;
 
 use T3docs\ProjectInfo\Component\Table;
@@ -15,7 +28,7 @@ class BeUserGroupTableProvider extends BaseDataProvider implements TableDataProv
 
     public function __construct(
         private readonly ConnectionPool $connectionPool,
-        LanguageService $languageService
+        LanguageService $languageService,
     ) {
         parent::__construct($languageService);
     }
@@ -32,19 +45,19 @@ class BeUserGroupTableProvider extends BaseDataProvider implements TableDataProv
         foreach ($result as $row) {
             $tables = array_merge(
                 $tables,
-                array_map('trim', explode(',', (string)$row['tables_select']))
+                array_map('trim', explode(',', (string)$row['tables_select'])),
             );
             $tables = array_merge(
                 $tables,
-                array_map('trim', explode(',', (string)$row['tables_modify']))
+                array_map('trim', explode(',', (string)$row['tables_modify'])),
             );
         }
         // Remove duplicates
         $tables = array_unique($tables);
 
         // Remove empty strings
-        $tables = array_filter($tables, fn ($value) => $value !== '' && isset($GLOBALS['TCA'][$value]));
-        $tableLabels = array_map(fn ($value) => isset($GLOBALS['TCA'][$value]['ctrl']['title'])? $this->languageService->translateLLL($GLOBALS['TCA'][$value]['ctrl']['title']) : $value, $tables);
+        $tables = array_filter($tables, fn($value) => $value !== '' && isset($GLOBALS['TCA'][$value]));
+        $tableLabels = array_map(fn($value) => isset($GLOBALS['TCA'][$value]['ctrl']['title']) ? $this->languageService->translateLLL($GLOBALS['TCA'][$value]['ctrl']['title']) : $value, $tables);
         $tables = array_values($tables);
         $data = [[$this->languageService->translateLocalLLL('tables'), ...$tableLabels]];
         foreach ($result as $row) {
